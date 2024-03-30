@@ -1,13 +1,22 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet } from 'react-native';
+import React, {useEffect} from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Home from './components/screens/Home';
 import Results from './components/screens/Results';
 import Questionnaire from './components/screens/Questionnaire';
+import Database from './components/Database';
 
 const Tab = createBottomTabNavigator();
 
 export default function App() {
+  const {initializeDatabase} = Database();
+
+  useEffect(() => {
+    initializeDatabase();
+    console.log('Database initialized in App.js');
+  }, []);
+
   return (
     <NavigationContainer>
       <Tab.Navigator screenOptions={{headerShown: false,tabBarStyle: {display:"none"}}}>

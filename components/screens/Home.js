@@ -1,6 +1,7 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, Button, TouchableOpacity, Animated, TouchableWithoutFeedback } from 'react-native';
+import { StyleSheet, Text, View, Button, Animated, TouchableWithoutFeedback } from 'react-native';
 import React, {useEffect, useState} from 'react';
+import Database from '../Database';
 
 
 export default function Home({navigation}) {
@@ -9,8 +10,20 @@ export default function Home({navigation}) {
     const [buttonWidth, setButtonWidth] = useState(0); // State variable for buttonWidth
     const [buttonHeight, setButtonHeight] = useState(0); // State variable for buttonHeight
     const COLORS = ['#8B0000', '#8B0000']; // Example colors for interpolation
-    const [isCrashed, setIsCrashed] = useState(false); // State variable to track if button has crashed
+    const {insertDataCrash, isCrash, fetchDataIsCrash, fetchDataCrash} = Database(); 
     let _value = 0; // Initialize _value
+
+    // Effect to add listener when component mounts
+  useEffect(() => {
+    fetchDataIsCrash();
+    fetchDataCrash();
+    const listener = pressAction.addListener((v) => {
+      _value = v.value; // Update _value when pressAction changes
+    });
+    // Cleanup function to remove the listener when component unmounts
+    return () => pressAction.removeListener(listener);
+  }, [pressAction]); // Run effect whenever pressAction changes
+
 
     // Function to handle layout event and update buttonWidth and buttonHeight
   const getButtonWidthLayout = (e) => {
@@ -34,18 +47,10 @@ export default function Home({navigation}) {
     };
   };
 
-  // Effect to add listener when component mounts
-  useEffect(() => {
-    const listener = pressAction.addListener((v) => {
-      _value = v.value; // Update _value when pressAction changes
-    });
-
-    // Cleanup function to remove the listener when component unmounts
-    return () => pressAction.removeListener(listener);
-  }, [pressAction]); // Run effect whenever pressAction changes
 
   // Function to handle touch event
   const handlePressIn = () => {
+    console.log(isCrash);
     Animated.timing(pressAction, {
       toValue: 1,
       duration: ACTION_TIMER, 
@@ -65,21 +70,22 @@ export default function Home({navigation}) {
   const pressComplete = () => {
     if (_value === 1) {
         alert('CRASH!');
-        console.log('CRASH!');
-        setIsCrashed(true);
+        insertDataCrash(new Date());
         }
   };
 
   return (
     <View style={styles.container}>
         <TouchableWithoutFeedback onPressIn={handlePressIn} onPressOut={handlePressOut}>
-            <View style={[styles.crashButton, isCrashed ? styles.hasCrashed : null]} onLayout={getButtonWidthLayout}>
+            <View style={[styles.crashButton, Database.isCrash ? styles.hasCrashed : null]} onLayout={getButtonWidthLayout}>
                 <Animated.View style={[styles.bgFill, getProgressStyles()]}/>
                 <Text style={styles.buttonText}>CRASH</Text>
             </View>
         </TouchableWithoutFeedback>
       <StatusBar style="auto" />
       <View style={styles.buttonContainer}>
+        
+      {isCrash && <Text>Crash</Text>}
         <Button title="Résultats" onPress={() => navigation.navigate('Results')} color={'grey'} />
         </View>
     </View>
