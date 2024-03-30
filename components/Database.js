@@ -14,9 +14,9 @@ export default function Database() {
     const initializeDatabase = () => {
         db.transaction(tx => {
             tx.executeSql(
-                'CREATE TABLE IF NOT EXISTS Crash (id INTEGER PRIMARY KEY AUTOINCREMENT, dateStart DATETIME NOT NULL, dateEnd DATETIME, isCrash BOOLEAN DEFAULT TRUE);'
+                'CREATE TABLE IF NOT EXISTS Crash (id INTEGER PRIMARY KEY AUTOINCREMENT, dateStart STRING NOT NULL, dateEnd STRING, isCrash BOOLEAN DEFAULT TRUE);'
             );
-        }, null, fetchDataIsCrash);
+        }, null, console.log('Database initialized'));
     };
 
 
@@ -38,7 +38,7 @@ export default function Database() {
     const updateDataCrash = (dateEnd) => {
         db.transaction(tx => {
             tx.executeSql(
-                'UPDATE Crash SET dateEnd = ?, isCrash = FALSE WHERE is Crash = TRUE;',
+                'UPDATE Crash SET dateEnd = ?, isCrash = FALSE WHERE isCrash = TRUE;',
                 [dateEnd],
                 (_, { rowsAffected }) => {
                     console.log(`Updated crash`);
@@ -59,10 +59,8 @@ export default function Database() {
                 (_, { rows }) => {
                     if (rows.length > 0) {
                         setIsCrash(true);
-                        console.log(rows.length);
                     } else {
                         setIsCrash(false);
-                        console.log(rows.length);
                     }
                 }
             );
@@ -82,6 +80,15 @@ export default function Database() {
         });
     };
 
-    return { insertDataCrash, fetchDataIsCrash, isCrash, fetchDataCrash, initializeDatabase, updateDataCrash };
+    const cleanDatabase = () => {
+        db.transaction(tx => {
+            tx.executeSql(
+                'DROP TABLE IF EXISTS Crash;'
+            );
+        }, null, console.log('Database cleaned'));
+    };
+
+
+    return { insertDataCrash, fetchDataIsCrash, isCrash, fetchDataCrash, initializeDatabase, updateDataCrash, cleanDatabase };
 
 }

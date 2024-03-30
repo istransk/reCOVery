@@ -10,9 +10,10 @@ import Database from './components/Database';
 const Tab = createBottomTabNavigator();
 
 export default function App() {
-  const {initializeDatabase} = Database();
+  const {initializeDatabase,cleanDatabase} = Database();
 
   useEffect(() => {
+    //cleanDatabase();
     initializeDatabase();
     console.log('Database initialized in App.js');
   }, []);

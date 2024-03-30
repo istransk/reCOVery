@@ -3,6 +3,24 @@ import { StyleSheet, Text, View, Button, Animated, TouchableWithoutFeedback } fr
 import React, {useEffect, useState} from 'react';
 import Database from '../Database';
 
+function getDate() {
+    const today = new Date();
+    const month = today.getMonth() + 1;
+    const year = today.getFullYear();
+    const date = today.getDate();
+    const hours = today.getHours();
+    const minutes = today.getMinutes();
+    if (month < 10 && date < 10) {
+        return `${year}-0${month}-0${date}-${hours}:${minutes}`;
+    } else if (month < 10) {
+        return `${year}-0${month}-${date}-${hours}:${minutes}`;
+    } else if (date < 10) {
+        return `${year}-${month}-0${date}-${hours}:${minutes}`;
+    } else {
+    return `${year}-${month}-${date}-${hours}:${minutes}`;
+    }
+  }
+
 
 export default function Home({navigation}) {
     const [pressAction] = useState(new Animated.Value(0)); // State variable for the animated value
@@ -10,13 +28,17 @@ export default function Home({navigation}) {
     const [buttonWidth, setButtonWidth] = useState(0); // State variable for buttonWidth
     const [buttonHeight, setButtonHeight] = useState(0); // State variable for buttonHeight
     const COLORS = ['#8B0000', '#8B0000']; // Example colors for interpolation
-    const {insertDataCrash, isCrash, fetchDataIsCrash, fetchDataCrash} = Database(); 
+    const COLORS2 = ['white', 'white'];
+    const [isCrashed, setIsCrashed] = useState(false); // State variable to track if button has crashed
+    const {insertDataCrash, isCrash, fetchDataIsCrash, updateDataCrash, fetchDataCrash} = Database(); 
     let _value = 0; // Initialize _value
 
     // Effect to add listener when component mounts
   useEffect(() => {
     fetchDataIsCrash();
     fetchDataCrash();
+    console.log('je veux mon matcha latte');
+    console.log('tralalalal');
     const listener = pressAction.addListener((v) => {
       _value = v.value; // Update _value when pressAction changes
     });
@@ -36,10 +58,18 @@ export default function Home({navigation}) {
       inputRange: [0, 1],
       outputRange: [0, buttonWidth],
     });
-    const bgColor = pressAction.interpolate({
-      inputRange: [0, 1],
-      outputRange: COLORS,
-    });
+    let bgColor;
+    if (isCrash) {
+        bgColor = pressAction.interpolate({
+        inputRange: [0, 1],
+        outputRange: COLORS2,
+        });
+    } else {
+        bgColor = pressAction.interpolate({
+        inputRange: [0, 1],
+        outputRange: COLORS,
+        });
+    }
     return {
       width: width,
       height: buttonHeight,
@@ -69,23 +99,34 @@ export default function Home({navigation}) {
 
   const pressComplete = () => {
     if (_value === 1) {
-        alert('CRASH!');
-        insertDataCrash(new Date());
+        date = getDate();
+        console.log(date);
+        if (isCrash) {
+            alert("Vous n'êtes plus en crash");
+            setIsCrashed(false);
+            updateDataCrash(date);
+        } else {
+            alert('CRASH!');
+            console.log('CRASH!');
+            setIsCrashed(true);
+            insertDataCrash(date);
         }
+    }
   };
+
 
   return (
     <View style={styles.container}>
         <TouchableWithoutFeedback onPressIn={handlePressIn} onPressOut={handlePressOut}>
-            <View style={[styles.crashButton, Database.isCrash ? styles.hasCrashed : null]} onLayout={getButtonWidthLayout}>
+            <View style={[styles.crashButton, isCrash ? styles.hasCrashed : null]} onLayout={getButtonWidthLayout}>
                 <Animated.View style={[styles.bgFill, getProgressStyles()]}/>
                 <Text style={styles.buttonText}>CRASH</Text>
             </View>
         </TouchableWithoutFeedback>
+        {isCrash && <Text>Crash</Text>}
       <StatusBar style="auto" />
+      <Button title="Data" onPress={fetchDataCrash} />
       <View style={styles.buttonContainer}>
-        
-      {isCrash && <Text>Crash</Text>}
         <Button title="Résultats" onPress={() => navigation.navigate('Results')} color={'grey'} />
         </View>
     </View>
