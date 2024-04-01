@@ -47,8 +47,7 @@ export default function Database() {
                     console.log('Error updating crash', error);
                 }
             );
-        });
-        setIsCrash(false);
+        }, null, fetchDataIsCrash());
     };
 
     const fetchDataIsCrash = () => {

@@ -29,7 +29,6 @@ export default function Home({navigation}) {
     const [buttonHeight, setButtonHeight] = useState(0); // State variable for buttonHeight
     const COLORS = ['#8B0000', '#8B0000']; // Example colors for interpolation
     const COLORS2 = ['white', 'white'];
-    const [isCrashed, setIsCrashed] = useState(false); // State variable to track if button has crashed
     const {insertDataCrash, isCrash, fetchDataIsCrash, updateDataCrash, fetchDataCrash} = Database(); 
     let _value = 0; // Initialize _value
 
@@ -37,8 +36,6 @@ export default function Home({navigation}) {
   useEffect(() => {
     fetchDataIsCrash();
     fetchDataCrash();
-    console.log('je veux mon matcha latte');
-    console.log('tralalalal');
     const listener = pressAction.addListener((v) => {
       _value = v.value; // Update _value when pressAction changes
     });
@@ -80,7 +77,6 @@ export default function Home({navigation}) {
 
   // Function to handle touch event
   const handlePressIn = () => {
-    console.log(isCrash);
     Animated.timing(pressAction, {
       toValue: 1,
       duration: ACTION_TIMER, 
@@ -100,15 +96,12 @@ export default function Home({navigation}) {
   const pressComplete = () => {
     if (_value === 1) {
         date = getDate();
-        console.log(date);
         if (isCrash) {
             alert("Vous n'êtes plus en crash");
-            setIsCrashed(false);
             updateDataCrash(date);
         } else {
             alert('CRASH!');
             console.log('CRASH!');
-            setIsCrashed(true);
             insertDataCrash(date);
         }
     }
