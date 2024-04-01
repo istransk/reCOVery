@@ -4,50 +4,40 @@ import React, {useEffect, useState} from 'react';
 import Database from '../Database';
 
 function getDate() {
-    const today = new Date();
-    const month = today.getMonth() + 1;
-    const year = today.getFullYear();
-    const date = today.getDate();
-    const hours = today.getHours();
-    const minutes = today.getMinutes();
-    if (month < 10 && date < 10) {
-        return `${year}-0${month}-0${date}-${hours}:${minutes}`;
-    } else if (month < 10) {
-        return `${year}-0${month}-${date}-${hours}:${minutes}`;
-    } else if (date < 10) {
-        return `${year}-${month}-0${date}-${hours}:${minutes}`;
-    } else {
+  const today = new Date();
+  const month = today.getMonth() + 1;
+  const year = today.getFullYear();
+  const date = today.getDate();
+  const hours = today.getHours();
+  const minutes = today.getMinutes();
+  if (month < 10 && date < 10) {
+    return `${year}-0${month}-0${date}-${hours}:${minutes}`;
+  } else if (month < 10) {
+    return `${year}-0${month}-${date}-${hours}:${minutes}`;
+  } else if (date < 10) {
+    return `${year}-${month}-0${date}-${hours}:${minutes}`;
+  } else {
     return `${year}-${month}-${date}-${hours}:${minutes}`;
-    }
   }
+}
 
-
-export default function Home({navigation}) {
-    const [pressAction] = useState(new Animated.Value(0)); // State variable for the animated value
-    const ACTION_TIMER = 1000; // Duration of the action
-    const [buttonWidth, setButtonWidth] = useState(0); // State variable for buttonWidth
-    const [buttonHeight, setButtonHeight] = useState(0); // State variable for buttonHeight
-    const COLORS = ['#8B0000', '#8B0000']; // Example colors for interpolation
-    const COLORS2 = ['white', 'white'];
-    const {insertDataCrash, isCrash, fetchDataIsCrash, updateDataCrash, fetchDataCrash} = Database(); 
-    let _value = 0; // Initialize _value
-
-    // Effect to add listener when component mounts
+export default function Home({ navigation }) {
+  const [pressAction] = useState(new Animated.Value(0)); // State variable for the animated value
+  const ACTION_TIMER = 1000; // Duration of the action
+  const [buttonWidth, setButtonWidth] = useState(0); // State variable for buttonWidth
+  const [buttonHeight, setButtonHeight] = useState(0); // State variable for buttonHeight
+  const [value, setValue] = useState(0); // State variable for _value
+  const { insertDataCrash, fetchDataIsCrash, updateDataCrash, fetchDataCrash, isCrash} = Database();
+  
+  // Effect to fetch initial data
   useEffect(() => {
     fetchDataIsCrash();
-    fetchDataCrash();
-    const listener = pressAction.addListener((v) => {
-      _value = v.value; // Update _value when pressAction changes
-    });
-    // Cleanup function to remove the listener when component unmounts
-    return () => pressAction.removeListener(listener);
-  }, [pressAction]); // Run effect whenever pressAction changes
+  }, []);
 
-
-    // Function to handle layout event and update buttonWidth and buttonHeight
+  // Function to handle layout event and update buttonWidth and buttonHeight
   const getButtonWidthLayout = (e) => {
-    setButtonWidth(e.nativeEvent.layout.width-2 );
-    setButtonHeight(e.nativeEvent.layout.height-2);
+    setButtonWidth(e.nativeEvent.layout.width - 2);
+    setButtonHeight(e.nativeEvent.layout.height - 2);
   };
 
   const getProgressStyles = () => {
@@ -55,18 +45,12 @@ export default function Home({navigation}) {
       inputRange: [0, 1],
       outputRange: [0, buttonWidth],
     });
-    let bgColor;
-    if (isCrash) {
-        bgColor = pressAction.interpolate({
-        inputRange: [0, 1],
-        outputRange: COLORS2,
-        });
-    } else {
-        bgColor = pressAction.interpolate({
-        inputRange: [0, 1],
-        outputRange: COLORS,
-        });
-    }
+
+    const bgColor = pressAction.interpolate({
+      inputRange: [0, 1],
+      outputRange: [isCrash ? 'white' : '#8B0000', isCrash ? 'white' : '#8B0000'],
+    });
+
     return {
       width: width,
       height: buttonHeight,
@@ -74,12 +58,12 @@ export default function Home({navigation}) {
     };
   };
 
-
   // Function to handle touch event
   const handlePressIn = () => {
+    setValue(pressAction._value);
     Animated.timing(pressAction, {
       toValue: 1,
-      duration: ACTION_TIMER, 
+      duration: ACTION_TIMER,
       useNativeDriver: false,
     }).start(pressComplete);
   };
@@ -88,40 +72,38 @@ export default function Home({navigation}) {
   const handlePressOut = () => {
     Animated.timing(pressAction, {
       toValue: 0,
-      duration: _value * ACTION_TIMER, 
+      duration: pressAction._value * ACTION_TIMER,
       useNativeDriver: false,
     }).start();
   };
 
-  const pressComplete = () => {
-    if (_value === 1) {
-        date = getDate();
-        if (isCrash) {
-            alert("Vous n'êtes plus en crash");
-            updateDataCrash(date);
-        } else {
-            alert('CRASH!');
-            console.log('CRASH!');
-            insertDataCrash(date);
-        }
+ const pressComplete = () => {
+  const value = pressAction._value;
+  if (value === 1) {
+    const date = getDate();
+    if (isCrash) {
+      alert("Vous n'êtes plus en crash");
+      updateDataCrash(date);
+    } else {
+      alert('CRASH!');
+      insertDataCrash(date);
     }
-  };
-
+  }
+};
 
   return (
     <View style={styles.container}>
-        <TouchableWithoutFeedback onPressIn={handlePressIn} onPressOut={handlePressOut}>
-            <View style={[styles.crashButton, isCrash ? styles.hasCrashed : null]} onLayout={getButtonWidthLayout}>
-                <Animated.View style={[styles.bgFill, getProgressStyles()]}/>
-                <Text style={styles.buttonText}>CRASH</Text>
-            </View>
-        </TouchableWithoutFeedback>
-        {isCrash && <Text>Crash</Text>}
-      <StatusBar style="auto" />
+      <TouchableWithoutFeedback onPressIn={handlePressIn} onPressOut={handlePressOut}>
+        <View style={[styles.crashButton, isCrash ? styles.hasCrashed : null]} onLayout={getButtonWidthLayout}>
+          <Animated.View style={[styles.bgFill, getProgressStyles()]} />
+          <Text style={styles.buttonText}>CRASH</Text>
+        </View>
+      </TouchableWithoutFeedback>
+      {isCrash && <Text>Crash</Text>}
       <Button title="Data" onPress={fetchDataCrash} />
       <View style={styles.buttonContainer}>
         <Button title="Résultats" onPress={() => navigation.navigate('Results')} color={'grey'} />
-        </View>
+      </View>
     </View>
   );
 }
@@ -139,8 +121,8 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     width: '100%',
-},
-crashButton: {
+  },
+  crashButton: {
     position: 'absolute',
     top: 100,
     backgroundColor: 'white', // Change background color to white
@@ -156,19 +138,19 @@ crashButton: {
     alignItems: 'center',
     justifyContent: 'center',
     height: 50,
-},
-hasCrashed: {
+  },
+  hasCrashed: {
     backgroundColor: '#8B0000', // Change background color to red
-},
-buttonText: {
+  },
+  buttonText: {
     fontSize: 20, // Adjust font size
     fontWeight: 'bold', // Add bold font weight
     color: 'black', // Change text color to black
-},
-bgFill: {
+  },
+  bgFill: {
     position: 'absolute',
     top: 0,
     left: 0,
     borderRadius: 7, // Match border radius
-}
+  },
 });

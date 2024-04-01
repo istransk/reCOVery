@@ -6,11 +6,6 @@ const db = SQLite.openDatabase('symptomQuestions.db');
 export default function Database() {
     const [isCrash, setIsCrash] = useState(false);
 
-    useEffect(() => {
-        console.log("isCrash:", isCrash);
-    }, [isCrash]);
-
-
     const initializeDatabase = () => {
         db.transaction(tx => {
             tx.executeSql(
@@ -27,6 +22,7 @@ export default function Database() {
                 [dateStart],
                 (_, { insertId }) => {
                     console.log(`Inserted crash with ID: ${insertId}`);
+                    setIsCrash(true);
                 },
                 (_, error) => {
                     console.log('Error inserting crash', error);
@@ -42,6 +38,7 @@ export default function Database() {
                 [dateEnd],
                 (_, { rowsAffected }) => {
                     console.log(`Updated crash`);
+                    setIsCrash(false);
                 },
                 (_, error) => {
                     console.log('Error updating crash', error);
