@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, Button, Animated, TouchableWithoutFeedback } from 'react-native';
+import { StyleSheet, Text, View, Button, Animated, TouchableWithoutFeedback, TouchableOpacity } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import Database from '../Database';
 
@@ -101,9 +101,9 @@ export default function Home({ navigation }) {
       </TouchableWithoutFeedback>
       {isCrash && <Text>Crash</Text>}
       <Button title="Data" onPress={fetchDataCrash} />
-      <View style={styles.buttonContainer}>
-        <Button title="Résultats" onPress={() => navigation.navigate('Results')} color={'grey'} />
-      </View>
+      <TouchableOpacity style={styles.resultsButton} onPress={() => navigation.navigate('Results')}>
+        <Text style={styles.menuText}>RÉSULTATS</Text>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -117,10 +117,11 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     position: 'absolute',
-    bottom: 0,
+    bottom: 20,
     left: 0,
     right: 0,
     width: '100%',
+    color: 'grey',
   },
   crashButton: {
     position: 'absolute',
@@ -139,6 +140,15 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     height: 50,
   },
+  resultsButton: {
+    position: 'absolute',
+    bottom: 0,
+    backgroundColor: 'grey',
+    width: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: 50,
+  },
   hasCrashed: {
     backgroundColor: '#8B0000', // Change background color to red
   },
@@ -146,6 +156,11 @@ const styles = StyleSheet.create({
     fontSize: 20, // Adjust font size
     fontWeight: 'bold', // Add bold font weight
     color: 'black', // Change text color to black
+  },
+  menuText:{
+    color: 'white',
+    fontSize: 17,
+    fontWeight: '300',
   },
   bgFill: {
     position: 'absolute',
