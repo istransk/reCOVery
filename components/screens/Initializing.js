@@ -2,7 +2,6 @@ import Symptoms from "../database/Symptoms";
 import React, { useState, useEffect  } from "react";
 import { Text, View, FlatList, TouchableOpacity} from "react-native";
 import SymptomsDatabase from "../database/SymptomsDatabase";
-import Database from "../Database";
 
 export default function Initializing({ navigation }) {
     const [SymptomsIntensity, setSymptomsIntensity] = useState({});
@@ -10,7 +9,6 @@ export default function Initializing({ navigation }) {
     const [isDone, setIsDone] = useState(false);
     const [currentSymptom, setCurrentSymptom] = useState(0);
     const {initializeDatabaseSymptoms, insertDataSymptoms, fetchDataSymptoms} = SymptomsDatabase();
-    const {fetchDataCrash} = Database();
 
     useEffect(() => {
         initializeDatabaseSymptoms()}, []);
@@ -121,7 +119,7 @@ export default function Initializing({ navigation }) {
                     <TouchableOpacity onPress={saveAnswersToDatabase}>
                         <Text>OK</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={fetchDataCrash}>
+                    <TouchableOpacity onPress={fetchData}>
                         <Text>Modifier</Text>
                     </TouchableOpacity>
                     </View>
