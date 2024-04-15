@@ -11,7 +11,7 @@ export default function Database() {
             tx.executeSql(
                 'CREATE TABLE IF NOT EXISTS Crash (id INTEGER PRIMARY KEY AUTOINCREMENT, dateStart STRING NOT NULL, dateEnd STRING, isCrash BOOLEAN DEFAULT TRUE);'
             );
-        }, null, console.log('Database initialized'));
+        }, null, console.log('Table Crash initialized'));
     };
 
 

@@ -1,11 +1,16 @@
 import Symptoms from "../database/Symptoms";
-import React, { useState } from "react";
-import { Text, View, FlatList, TouchableOpacity } from "react-native";
+import React, { useState, useEffect  } from "react";
+import { Text, View, FlatList, TouchableOpacity} from "react-native";
+import SymptomsDatabase from "../database/SymptomsDatabase";
 
 export default function Initializing({ navigation }) {
     const [SymptomsIntensity, setSymptomsIntensity] = useState({});
     const [hasStarted, setHasStarted] = useState(false);
     const [currentSymptom, setCurrentSymptom] = useState(0);
+    const {initializeDatabaseSymptoms} = SymptomsDatabase();
+
+    useEffect(() => {
+        initializeDatabaseSymptoms()}, []);
     
     const handleIntensityChange = (symptom, intensity) => {
         setSymptomsIntensity(prevState => ({
