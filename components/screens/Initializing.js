@@ -3,20 +3,10 @@ import React, { useState } from "react";
 import { Text, View, FlatList, TouchableOpacity } from "react-native";
 
 export default function Initializing({ navigation }) {
-    const [progress, setProgress] = useState(0);
     const [SymptomsIntensity, setSymptomsIntensity] = useState({});
     const [hasStarted, setHasStarted] = useState(false);
-
-    //Function to initialize Symptoms to SymptomsIntensity object with default intensity 0
+    const [currentSymptom, setCurrentSymptom] = useState(0);
     
-
-    const updateSymptomsGrades = (symptom, intensity) => {
-        setSymptomsIntensity(prevState => ({
-            ...prevState,
-            [symptom]: intensity
-        }));
-    }
-
     const handleIntensityChange = (symptom, intensity) => {
         setSymptomsIntensity(prevState => ({
             ...prevState,
@@ -25,7 +15,7 @@ export default function Initializing({ navigation }) {
     };
 
     const renderSymptomItem = ({ item }) => {
-        const gradeButtons = [0, 1, 2, 3, 4, 5].map(intensity => (
+        const gradeButtons = [0, 1, 2, 3].map(intensity => (
             <TouchableOpacity
                 key={intensity}
                 style={{ padding: 5, backgroundColor: SymptomsIntensity[item] === intensity ? 'blue' : 'grey', borderRadius: 5, margin: 2 }}
@@ -45,45 +35,64 @@ export default function Initializing({ navigation }) {
         );
     };
 
+    const handleNext = () => {
+        setCurrentSymptom(prevState => prevState + 1);
+    };
+
+    const handlePrevious = () => {
+        setCurrentSymptom(prevState => prevState - 1);
+    };
+
     const symptomGradesIntensity = Object.keys(SymptomsIntensity).map(symptom => ({ symptom, intensity: SymptomsIntensity[symptom] }));
 
     const renderSymptomWithIntensity = ({ item }) => {
         return (
-            <Text>{item.symptom}: {item.intensity || 'Not graded'}</Text>
-        );
-    };
-
-    const renderSymptom = () => {
-        return (
-            <Text>{Symptoms[currentSymptom]}</Text>
+            <Text>{item.symptom}: {item.intensity }</Text>
         );
     };
 
     return (
         <View>
-            {(!hasStarted) &&
+            {!hasStarted &&
             (<View>
             <Text>Bienvenue sur l'application reCOVery! Avant de commencer à aller sur l'application, je te laisserai 
-                répondre à quelques questions d'évaluer tes symptômes.
-                Pour chaque symptôme, tu devras indiquer son intensité sur une échelle de 0 à 3. 
-                0 = Aucun symptôme, 1 = Symptôme léger (n'affecte pas la vie quotidienne), 
-                2 = Symptôme modéré (affecte la vie quotidienne dans une certaine mesure), 
-                3 = Symptôme sévère (affecte tous les aspects de la vie quotidienne ; perturbe la vie).
+                répondre à quelques questions afin d'évaluer tes symptômes. {"\n"}
+                Pour chaque symptôme, tu devras indiquer son intensité sur une échelle de 0 à 3. {"\n"}
+                0 = Aucun symptôme, 1 = Symptôme léger (n'affecte pas la vie quotidienne) {"\n"}
+                2 = Symptôme modéré (affecte la vie quotidienne dans une certaine mesure) {"\n"}
+                3 = Symptôme sévère (affecte tous les aspects de la vie quotidienne ; perturbe la vie) {"\n"}
                 Dès que tu es prêt, clique sur le bouton ci-dessous pour commencer. 
             </Text>
-            <TouchableOpacity onPress={setHasStarted(true)}/>
+            <TouchableOpacity onPress={() => setHasStarted(true)}>
+                <Text>Commencer</Text>
+            </TouchableOpacity>
             </View>
             )}
-            <FlatList
-                data={Symptoms}
-                renderItem={renderSymptomItem}
-                keyExtractor={(item, index) => index.toString()}
-            />
+            {hasStarted && (
+            <View>
+            {renderSymptomItem({ item: Symptoms[currentSymptom] })}
             <FlatList
                     data={symptomGradesIntensity}
                     renderItem={renderSymptomWithIntensity}
                     keyExtractor={(item, index) => index.toString()}
                 />
+                {currentSymptom === Symptoms.length - 1 && (
+                    <TouchableOpacity onPress={() => navigation.navigate('Home')}>
+                        <Text>Terminer</Text>
+                    </TouchableOpacity>
+                )}
+                {currentSymptom < Symptoms.length - 1 && (
+                <TouchableOpacity onPress={handleNext}>
+                    <Text>Suivant</Text>
+                </TouchableOpacity>
+                )}
+                {currentSymptom > 0 && (
+                <TouchableOpacity onPress={handlePrevious}>
+                    <Text>Précédent</Text>
+                </TouchableOpacity>
+                )}
+            </View>
+                )}
         </View>
     );
 }
