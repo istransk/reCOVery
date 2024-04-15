@@ -2,12 +2,15 @@ import Symptoms from "../database/Symptoms";
 import React, { useState, useEffect  } from "react";
 import { Text, View, FlatList, TouchableOpacity} from "react-native";
 import SymptomsDatabase from "../database/SymptomsDatabase";
+import Database from "../Database";
 
 export default function Initializing({ navigation }) {
     const [SymptomsIntensity, setSymptomsIntensity] = useState({});
     const [hasStarted, setHasStarted] = useState(false);
+    const [isDone, setIsDone] = useState(false);
     const [currentSymptom, setCurrentSymptom] = useState(0);
-    const {initializeDatabaseSymptoms} = SymptomsDatabase();
+    const {initializeDatabaseSymptoms, insertDataSymptoms, fetchDataSymptoms} = SymptomsDatabase();
+    const {fetchDataCrash} = Database();
 
     useEffect(() => {
         initializeDatabaseSymptoms()}, []);
@@ -56,6 +59,16 @@ export default function Initializing({ navigation }) {
         );
     };
 
+    const saveAnswersToDatabase = () => {
+        symptomGradesIntensity.forEach(({ symptom, intensity }) => {
+            insertDataSymptoms(symptom, intensity);
+        });
+    }
+
+    const fetchData = () => {
+        fetchDataSymptoms();
+    }
+
     return (
         <View>
             {!hasStarted &&
@@ -73,30 +86,45 @@ export default function Initializing({ navigation }) {
             </TouchableOpacity>
             </View>
             )}
-            {hasStarted && (
+            {hasStarted && !isDone && (
             <View>
-            {renderSymptomItem({ item: Symptoms[currentSymptom] })}
-            <FlatList
-                    data={symptomGradesIntensity}
-                    renderItem={renderSymptomWithIntensity}
-                    keyExtractor={(item, index) => index.toString()}
-                />
-                {currentSymptom === Symptoms.length - 1 && (
-                    <TouchableOpacity onPress={() => navigation.navigate('Home')}>
-                        <Text>Terminer</Text>
+                {renderSymptomItem({ item: Symptoms[currentSymptom] })}
+
+                
+                {currentSymptom === Symptoms.length -1 && (
+                <TouchableOpacity onPress={() => setIsDone(true)}>
+                    <Text>Terminer</Text>
                     </TouchableOpacity>
                 )}
+            
                 {currentSymptom < Symptoms.length - 1 && (
                 <TouchableOpacity onPress={handleNext}>
                     <Text>Suivant</Text>
                 </TouchableOpacity>
                 )}
+
                 {currentSymptom > 0 && (
                 <TouchableOpacity onPress={handlePrevious}>
                     <Text>Précédent</Text>
                 </TouchableOpacity>
                 )}
+  
             </View>
+                )}
+                {isDone && (
+                    <View>
+                    <FlatList
+                            data={symptomGradesIntensity}
+                            renderItem={renderSymptomWithIntensity}
+                            keyExtractor={(item, index) => index.toString()}
+                    />
+                    <TouchableOpacity onPress={saveAnswersToDatabase}>
+                        <Text>OK</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={fetchDataCrash}>
+                        <Text>Modifier</Text>
+                    </TouchableOpacity>
+                    </View>
                 )}
         </View>
     );

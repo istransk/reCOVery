@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import * as SQLite from 'expo-sqlite';
-
-const db = SQLite.openDatabase('symptomQuestions.db');
+import db from './database/DefineDatabase';
 
 export default function Database() {
     const [isCrash, setIsCrash] = useState(false);

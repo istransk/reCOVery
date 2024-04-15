@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import * as SQLite from 'expo-sqlite';
-
-const db = SQLite.openDatabase('symptomQuestions.db');
+import db from './DefineDatabase';
 
 export default function SymptomsDatabase() {
     const initializeDatabaseSymptoms = () => {
@@ -21,6 +20,7 @@ export default function SymptomsDatabase() {
     }
 
     const insertDataSymptoms = (symptom, intensity) => {
+        console.log('Inserting symptom');
         db.transaction(tx => {
             tx.executeSql(
                 'INSERT INTO Symptoms (symptom, intensity) VALUES (?, ?);',
