@@ -6,6 +6,7 @@ import Home from './components/screens/Home';
 import Results from './components/screens/Results';
 import Questionnaire from './components/screens/Questionnaire';
 import Database from './components/Database';
+import Initializing from './components/screens/Initializing';
 
 const Tab = createBottomTabNavigator();
 
@@ -21,6 +22,7 @@ export default function App() {
   return (
     <NavigationContainer>
       <Tab.Navigator screenOptions={{headerShown: false,tabBarStyle: {display:"none"}}}>
+        <Tab.Screen name="Initializing" component={Initializing} />
         <Tab.Screen name="Home" component={Home} />
         <Tab.Screen name="Questionnaire" component={Questionnaire} />
         <Tab.Screen name="Results" component={Results} />
