@@ -101,6 +101,9 @@ export default function Home({ navigation }) {
       </TouchableWithoutFeedback>
       {isCrash && <Text>Crash</Text>}
       <Button title="Data" onPress={fetchDataCrash} />
+      <TouchableOpacity onPress={() => navigation.navigate('Questionnaire')}>
+        <Text>Questionnaire</Text>
+      </TouchableOpacity>
       <TouchableOpacity style={styles.resultsButton} onPress={() => navigation.navigate('Results')}>
         <Text style={styles.menuText}>RÉSULTATS</Text>
       </TouchableOpacity>

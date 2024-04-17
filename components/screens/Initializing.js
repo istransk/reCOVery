@@ -1,17 +1,18 @@
 import Symptoms from "../database/Symptoms";
 import React, { useState, useEffect  } from "react";
-import { Text, View, FlatList, TouchableOpacity} from "react-native";
+import { Text, View, FlatList, TouchableOpacity, Button} from "react-native";
 import SymptomsDatabase from "../database/SymptomsDatabase";
 
 export default function Initializing({ navigation }) {
-    const [SymptomsIntensity, setSymptomsIntensity] = useState({});
+    const [symptomsIntensity, setSymptomsIntensity] = useState({});
     const [hasStarted, setHasStarted] = useState(false);
     const [isDone, setIsDone] = useState(false);
     const [currentSymptom, setCurrentSymptom] = useState(0);
     const {initializeDatabaseSymptoms, insertDataSymptoms, fetchDataSymptoms} = SymptomsDatabase();
 
     useEffect(() => {
-        initializeDatabaseSymptoms()}, []);
+        initializeDatabaseSymptoms()
+    }, []);
     
     const handleIntensityChange = (symptom, intensity) => {
         setSymptomsIntensity(prevState => ({
@@ -24,7 +25,7 @@ export default function Initializing({ navigation }) {
         const gradeButtons = [0, 1, 2, 3].map(intensity => (
             <TouchableOpacity
                 key={intensity}
-                style={{ padding: 5, backgroundColor: SymptomsIntensity[item] === intensity ? 'blue' : 'grey', borderRadius: 5, margin: 2 }}
+                style={{ padding: 5, backgroundColor: symptomsIntensity[item] === intensity ? 'blue' : 'grey', borderRadius: 5, margin: 2 }}
                 onPress={() => handleIntensityChange(item, intensity)}
             >
                 <Text style={{ color: 'white' }}>{intensity}</Text>
@@ -49,7 +50,7 @@ export default function Initializing({ navigation }) {
         setCurrentSymptom(prevState => prevState - 1);
     };
 
-    const symptomGradesIntensity = Object.keys(SymptomsIntensity).map(symptom => ({ symptom, intensity: SymptomsIntensity[symptom] }));
+    const symptomGradesIntensity = Object.keys(symptomsIntensity).map(symptom => ({ symptom, intensity: symptomsIntensity[symptom] }));
 
     const renderSymptomWithIntensity = ({ item }) => {
         return (
@@ -82,6 +83,7 @@ export default function Initializing({ navigation }) {
             <TouchableOpacity onPress={() => setHasStarted(true)}>
                 <Text>Commencer</Text>
             </TouchableOpacity>
+            <Button title="Home" onPress={() => navigation.navigate('Home')} />
             </View>
             )}
             {hasStarted && !isDone && (

@@ -22,9 +22,9 @@ export default function App() {
   return (
     <NavigationContainer>
       <Tab.Navigator screenOptions={{headerShown: false,tabBarStyle: {display:"none"}}}>
+        <Tab.Screen name="Questionnaire" component={Questionnaire} />
         <Tab.Screen name="Initializing" component={Initializing} />
         <Tab.Screen name="Home" component={Home} />
-        <Tab.Screen name="Questionnaire" component={Questionnaire} />
         <Tab.Screen name="Results" component={Results} />
       </Tab.Navigator>
     </NavigationContainer>

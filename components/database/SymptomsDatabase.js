@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import * as SQLite from 'expo-sqlite';
 import db from './DefineDatabase';
+import { useState } from 'react';
 
 export default function SymptomsDatabase() {
+    const [symptoms, setSymptoms] = useState([]); // [symptom, intensity
     const initializeDatabaseSymptoms = () => {
         db.transaction(tx => {
             tx.executeSql(
@@ -53,18 +53,18 @@ export default function SymptomsDatabase() {
     const fetchDataSymptoms = () => {
         db.transaction(tx => {
             tx.executeSql(
-                'SELECT * FROM Symptoms;',
+                'SELECT symptom, intensity FROM Symptoms;',
                 [],
                 (_, { rows }) => {
-                    const data = rows._array;
-                    console.log(data);
+                    setSymptoms(rows._array);
                 },
                 (_, error) => {
                     console.log('Error fetching symptoms', error);
                 }
             );
         });
+        
     }
 
-    return {initializeDatabaseSymptoms, insertDataSymptoms, updateDataSymptoms, fetchDataSymptoms, clearDatabaseSymptoms};
+    return {initializeDatabaseSymptoms, insertDataSymptoms, updateDataSymptoms, fetchDataSymptoms, clearDatabaseSymptoms, symptoms};
 }
