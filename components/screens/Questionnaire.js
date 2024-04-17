@@ -49,12 +49,13 @@ export default function Questionnaire({navigation}) {
       const gradeButtons = [0, 1, 2, 3].map(intensity => (
         <TouchableOpacity
             key={intensity}
-            style={{ padding: 5, backgroundColor: symptomsIntensity[item.symptom] === intensity ? 'blue' : 'grey', borderRadius: 5, margin: 2 }}
+            style={{ padding: 10, backgroundColor: symptomsIntensity[item.symptom] === intensity ? 'blue' : 'grey', borderRadius: 5, margin: 10 }}
             onPress={() => handleIntensityChange(item.symptom, intensity)}
         >
             <Text style={{ color: 'white' }}>{intensity}</Text>
         </TouchableOpacity>
     ));
+
     return (
       <View>
         <Text>{item.symptom}</Text>
@@ -69,13 +70,7 @@ export default function Questionnaire({navigation}) {
 
   return (
     <View style={styles.container}>
-      <FlatList
-        data={symptoms}
-        renderItem={({ item }) => (
-          <Text>{item.symptom}: {item.intensity}</Text>
-        )}
-        keyExtractor={(item) => item.symptom}
-      />
+      
       {renderQuestion(sortedSymptoms[currentSymptomIndex])}
           
           <TouchableOpacity onPress={goToPreviousSymptom}>
@@ -103,10 +98,10 @@ export default function Questionnaire({navigation}) {
 
 const styles = StyleSheet.create({
   container: {
+    marginTop: 50,
     flex: 1,
     backgroundColor: '#fff',
     alignItems: 'center',
-    justifyContent: 'center',
   },
   buttonContainer: {
     position: 'absolute',
