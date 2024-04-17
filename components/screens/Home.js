@@ -1,7 +1,9 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, Button, Animated, TouchableWithoutFeedback, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, Button, Animated, TouchableWithoutFeedback, TouchableOpacity, FlatList } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import Database from '../Database';
+import ActivitiesDatabase from '../database/ActivitiesDatabase';
+import {activities} from '../database/Symptoms.js';
+import SymptomsDatabase from '../database/SymptomsDatabase.js';
 
 function getDate() {
   const today = new Date();
@@ -28,6 +30,8 @@ export default function Home({ navigation }) {
   const [buttonHeight, setButtonHeight] = useState(0); // State variable for buttonHeight
   const [value, setValue] = useState(0); // State variable for _value
   const { insertDataCrash, fetchDataIsCrash, updateDataCrash, fetchDataCrash, isCrash} = Database();
+  const {insertDataActivities} = ActivitiesDatabase();
+  const {fetchDataSymptoms} = SymptomsDatabase();
   
   // Effect to fetch initial data
   useEffect(() => {
@@ -104,6 +108,7 @@ export default function Home({ navigation }) {
       <TouchableOpacity onPress={() => navigation.navigate('Questionnaire')}>
         <Text>Questionnaire</Text>
       </TouchableOpacity>
+  
       <TouchableOpacity style={styles.resultsButton} onPress={() => navigation.navigate('Results')}>
         <Text style={styles.menuText}>RÉSULTATS</Text>
       </TouchableOpacity>

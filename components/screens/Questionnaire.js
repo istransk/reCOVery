@@ -1,4 +1,3 @@
-import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, Button, FlatList, TouchableOpacity } from 'react-native';
 import { useEffect, useState} from 'react';
 import SymptomsDatabase from '../database/SymptomsDatabase';
@@ -9,6 +8,7 @@ export default function Questionnaire({navigation}) {
   const [currentSymptomIndex, setCurrentSymptomIndex] = useState(0);
   const [symptomsIntensity, setSymptomsIntensity] = useState({});
 
+
   useEffect(() => {
     fetchDataSymptoms();
   }, []);
@@ -16,6 +16,8 @@ export default function Questionnaire({navigation}) {
   useEffect(() => {
     if (symptoms) {
       console.log(symptoms);
+    } else {
+      console.log('No symptoms');
     }
     // Filter out symptoms with intensity 0 exept for "Sommeil"
     const filteredSymptoms = symptoms.filter(item => item.intensity !== 0 || item.symptom === "Sommeil");
@@ -79,7 +81,7 @@ export default function Questionnaire({navigation}) {
           <TouchableOpacity onPress={goToNextSymptom}>
             <Text>Suivant</Text>
           </TouchableOpacity>
-             
+
       <FlatList
         data={sortedSymptoms}
         renderItem={({ item }) => (

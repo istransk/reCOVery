@@ -1,7 +1,8 @@
-import Symptoms from "../database/Symptoms";
+import {symptoms, activities} from "../database/Symptoms";
 import React, { useState, useEffect  } from "react";
 import { Text, View, FlatList, TouchableOpacity, Button} from "react-native";
 import SymptomsDatabase from "../database/SymptomsDatabase";
+import ActivitiesDatabase from "../database/ActivitiesDatabase";
 
 export default function Initializing({ navigation }) {
     const [symptomsIntensity, setSymptomsIntensity] = useState({});
@@ -9,9 +10,11 @@ export default function Initializing({ navigation }) {
     const [isDone, setIsDone] = useState(false);
     const [currentSymptom, setCurrentSymptom] = useState(0);
     const {initializeDatabaseSymptoms, insertDataSymptoms, fetchDataSymptoms} = SymptomsDatabase();
+    const {initializeDatabaseActivities} = ActivitiesDatabase();
 
     useEffect(() => {
-        initializeDatabaseSymptoms()
+        initializeDatabaseSymptoms();
+        initializeDatabaseActivities();
     }, []);
     
     const handleIntensityChange = (symptom, intensity) => {
@@ -62,6 +65,10 @@ export default function Initializing({ navigation }) {
         symptomGradesIntensity.forEach(({ symptom, intensity }) => {
             insertDataSymptoms(symptom, intensity);
         });
+        activities.forEach(activity => {
+            insertDataSymptoms(activity.name, activity.category);
+        });
+        navigation.navigate('Home');
     }
 
     const fetchData = () => {
@@ -88,16 +95,16 @@ export default function Initializing({ navigation }) {
             )}
             {hasStarted && !isDone && (
             <View>
-                {renderSymptomItem({ item: Symptoms[currentSymptom] })}
+                {renderSymptomItem({ item: symptoms[currentSymptom] })}
 
                 
-                {currentSymptom === Symptoms.length -1 && (
+                {currentSymptom === symptoms.length -1 && (
                 <TouchableOpacity onPress={() => setIsDone(true)}>
                     <Text>Terminer</Text>
                     </TouchableOpacity>
                 )}
             
-                {currentSymptom < Symptoms.length - 1 && (
+                {currentSymptom < symptoms.length - 1 && (
                 <TouchableOpacity onPress={handleNext}>
                     <Text>Suivant</Text>
                 </TouchableOpacity>

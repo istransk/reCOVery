@@ -7,24 +7,27 @@ import Results from './components/screens/Results';
 import Questionnaire from './components/screens/Questionnaire';
 import Database from './components/Database';
 import Initializing from './components/screens/Initializing';
+import ActivitiesDatabase from './components/database/ActivitiesDatabase';
 
 const Tab = createBottomTabNavigator();
 
 export default function App() {
   const {initializeDatabase,cleanDatabase} = Database();
+  const {initializeDatabaseActivities} = ActivitiesDatabase();
 
   useEffect(() => {
     //cleanDatabase();
     initializeDatabase();
+    initializeDatabaseActivities();
     console.log('Database initialized in App.js');
   }, []);
 
   return (
     <NavigationContainer>
       <Tab.Navigator screenOptions={{headerShown: false,tabBarStyle: {display:"none"}}}>
-        <Tab.Screen name="Questionnaire" component={Questionnaire} />
         <Tab.Screen name="Initializing" component={Initializing} />
         <Tab.Screen name="Home" component={Home} />
+        <Tab.Screen name="Questionnaire" component={Questionnaire} />
         <Tab.Screen name="Results" component={Results} />
       </Tab.Navigator>
     </NavigationContainer>
