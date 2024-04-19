@@ -2,7 +2,9 @@ import db from './DefineDatabase';
 import { useState } from 'react';
 
 export default function SymptomsDatabase() {
-    const [symptoms, setSymptoms] = useState([]); // [symptom, intensity
+    const [symptoms, setSymptoms] = useState([]);
+    const [isInitialized, setIsInitialized] = useState(false); 
+
     const initializeDatabaseSymptoms = () => {
         db.transaction(tx => {
             tx.executeSql(
@@ -14,7 +16,7 @@ export default function SymptomsDatabase() {
     const clearDatabaseSymptoms = () => {
         db.transaction(tx => {
             tx.executeSql(
-                'DROP TABLE Symptoms;'
+                'DROP TABLE IF EXISTS Symptoms;'
             );
         }, null, console.log('Table Symptoms cleared'));
     }
@@ -52,6 +54,7 @@ export default function SymptomsDatabase() {
 
     const fetchDataSymptoms = () => {
         db.transaction(tx => {
+            setIsInitialized(true);
             tx.executeSql(
                 'SELECT symptom, intensity FROM Symptoms;',
                 [],
@@ -66,5 +69,5 @@ export default function SymptomsDatabase() {
         
     }
 
-    return {initializeDatabaseSymptoms, insertDataSymptoms, updateDataSymptoms, fetchDataSymptoms, clearDatabaseSymptoms, symptoms};
+    return {initializeDatabaseSymptoms, insertDataSymptoms, updateDataSymptoms, fetchDataSymptoms, clearDatabaseSymptoms, symptoms, isInitialized};
 }

@@ -2,13 +2,21 @@ import db from './DefineDatabase';
 import { useState } from 'react';
 
 export default function ActivitiesDatabase() {
-    const [activities, setActivities] = useState([]); // [activity, category]
+    const [activitiesList, setActivitiesList] = useState([]); // [activity, category]
     const initializeDatabaseActivities = () => {
         db.transaction(tx => {
             tx.executeSql(
                 'CREATE TABLE IF NOT EXISTS Activities (id INTEGER PRIMARY KEY AUTOINCREMENT, activity STRING NOT NULL UNIQUE, category STRING NOT NULL);'
             );
         }, null, console.log('Table Activities initialized'));
+    }
+
+    const clearDatabaseActivities = () => {
+        db.transaction(tx => {
+            tx.executeSql(
+                'DROP TABLE IF EXISTS Activities;'
+            );
+        }, null, console.log('Table Activities cleared'));
     }
 
     const insertDataActivities = (activity, category) => {
@@ -33,14 +41,14 @@ export default function ActivitiesDatabase() {
                 'SELECT activity, category FROM Activities;',
                 [],
                 (_, { rows }) => {
-                    setActivities(rows._array);
+                    setActivitiesList(rows._array);
                 },
                 (_, error) => {
-                    console.log('Error fetching activities', error);
+                    console.log('Error fetching activitie', error);
                 }
             );
         });
     }
 
-    return {initializeDatabaseActivities, insertDataActivities, activities, fetchDataActivities};
+    return {initializeDatabaseActivities, insertDataActivities, activitiesList, fetchDataActivities};
 }

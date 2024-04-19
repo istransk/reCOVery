@@ -3,6 +3,7 @@ import React, { useState, useEffect  } from "react";
 import { Text, View, FlatList, TouchableOpacity, Button} from "react-native";
 import SymptomsDatabase from "../database/SymptomsDatabase";
 import ActivitiesDatabase from "../database/ActivitiesDatabase";
+import Database from '../Database';
 
 export default function Initializing({ navigation }) {
     const [symptomsIntensity, setSymptomsIntensity] = useState({});
@@ -10,13 +11,14 @@ export default function Initializing({ navigation }) {
     const [isDone, setIsDone] = useState(false);
     const [currentSymptom, setCurrentSymptom] = useState(0);
     const {initializeDatabaseSymptoms, insertDataSymptoms, fetchDataSymptoms} = SymptomsDatabase();
-    const {initializeDatabaseActivities} = ActivitiesDatabase();
+    const {initializeDatabaseActivities, insertDataActivities} = ActivitiesDatabase();
+    const {initializeDatabase,cleanDatabase} = Database();
 
     useEffect(() => {
         initializeDatabaseSymptoms();
         initializeDatabaseActivities();
+        initializeDatabase();
     }, []);
-    
     const handleIntensityChange = (symptom, intensity) => {
         setSymptomsIntensity(prevState => ({
             ...prevState,
@@ -65,14 +67,22 @@ export default function Initializing({ navigation }) {
         symptomGradesIntensity.forEach(({ symptom, intensity }) => {
             insertDataSymptoms(symptom, intensity);
         });
-        activities.forEach(activity => {
-            insertDataSymptoms(activity.name, activity.category);
-        });
         navigation.navigate('Home');
     }
 
     const fetchData = () => {
         fetchDataSymptoms();
+    }
+
+    const start = () => {
+        try {
+            activities.forEach(activity => {
+                insertDataActivities(activity.name, activity.category);
+            });
+        } catch (error) {
+            console.log(error);
+        }
+        setHasStarted(true);
     }
 
     return (
@@ -87,14 +97,14 @@ export default function Initializing({ navigation }) {
                 3 = Symptôme sévère (affecte tous les aspects de la vie quotidienne ; perturbe la vie) {"\n"}
                 Dès que tu es prêt, clique sur le bouton ci-dessous pour commencer. 
             </Text>
-            <TouchableOpacity onPress={() => setHasStarted(true)}>
+            <TouchableOpacity onPress={start}>
                 <Text>Commencer</Text>
             </TouchableOpacity>
             <Button title="Home" onPress={() => navigation.navigate('Home')} />
             </View>
             )}
             {hasStarted && !isDone && (
-            <View>
+            <View style={{ marginTop: 50 }}>
                 {renderSymptomItem({ item: symptoms[currentSymptom] })}
 
                 
