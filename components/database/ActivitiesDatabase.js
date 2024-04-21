@@ -38,7 +38,7 @@ export default function ActivitiesDatabase() {
     const fetchDataActivities = () => {
         db.transaction(tx => {
             tx.executeSql(
-                'SELECT activity, category FROM Activities;',
+                'SELECT id, activity, category FROM Activities;',
                 [],
                 (_, { rows }) => {
                     setActivitiesList(rows._array);
