@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View, Button, Animated, TouchableWithoutFeedback, TouchableOpacity, FlatList } from 'react-native';
-import React, {useEffect, useState} from 'react';
-import Database from '../Database';
+import {useEffect, useState, useContext} from 'react';
+import {fetchDataIsCrash, insertCrashData, updateCrashData, fetchDataCrash, isCrash} from '../database/CrashDatabase';
 
 function getDate() {
   const today = new Date();
@@ -26,11 +26,14 @@ export default function Home({ navigation }) {
   const [buttonWidth, setButtonWidth] = useState(0); // State variable for buttonWidth
   const [buttonHeight, setButtonHeight] = useState(0); // State variable for buttonHeight
   const [value, setValue] = useState(0); // State variable for _value
-  const { insertDataCrash, fetchDataIsCrash, updateDataCrash, fetchDataCrash, isCrash} = Database();
+  const [hasCrashed, setHasCrashed] = useState(false);
   
   // Effect to fetch initial data
   useEffect(() => {
-    fetchDataIsCrash();
+    fetchDataIsCrash((result) => {
+      setHasCrashed(result);
+      console.log('This is a hasCrashed', result);
+  });
   }, []);
 
   // Function to handle layout event and update buttonWidth and buttonHeight
@@ -47,7 +50,7 @@ export default function Home({ navigation }) {
 
     const bgColor = pressAction.interpolate({
       inputRange: [0, 1],
-      outputRange: [isCrash ? 'white' : '#8B0000', isCrash ? 'white' : '#8B0000'],
+      outputRange: [hasCrashed ? 'white' : '#8B0000', hasCrashed ? 'white' : '#8B0000'],
     });
 
     return {
@@ -80,12 +83,16 @@ export default function Home({ navigation }) {
   const value = pressAction._value;
   if (value === 1) {
     const date = getDate();
-    if (isCrash) {
+    if (hasCrashed) {
       alert("Vous n'êtes plus en crash");
-      updateDataCrash(date);
+      updateCrashData(date, (success) => {
+        setHasCrashed(success);
+      });
     } else {
       alert('CRASH!');
-      insertDataCrash(date);
+      insertCrashData(date, (success) => {
+        setHasCrashed(success);
+      });
     }
   }
 };
@@ -98,12 +105,12 @@ const navigateToQuestion = () => {
   return (
     <View style={styles.container}>
       <TouchableWithoutFeedback onPressIn={handlePressIn} onPressOut={handlePressOut}>
-        <View style={[styles.crashButton, isCrash ? styles.hasCrashed : null]} onLayout={getButtonWidthLayout}>
+        <View style={[styles.crashButton, hasCrashed ? styles.hasCrashed : null]} onLayout={getButtonWidthLayout}>
           <Animated.View style={[styles.bgFill, getProgressStyles()]} />
           <Text style={styles.buttonText}>CRASH</Text>
         </View>
       </TouchableWithoutFeedback>
-      {isCrash && <Text>Crash</Text>}
+      {hasCrashed && <Text>Crash</Text>}
       <Button title="Data" onPress={fetchDataCrash} />
       
       <TouchableOpacity onPress={navigateToQuestion}>

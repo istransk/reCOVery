@@ -1,7 +1,6 @@
 import { Text, View, StyleSheet, FlatList, TouchableOpacity} from 'react-native';
 import { useEffect, useState } from 'react';
-import ActivitiesDatabase from '../database/ActivitiesDatabase';
-import DailyActivitiesDatabase from '../database/DailyActivitiesDatabase';
+import {fetchDataDailyActivities} from '../database/DailyActivitiesDatabase';
 
 function getDate() {
     const today = new Date();
@@ -20,17 +19,12 @@ function getDate() {
   }
 
 export default function Activities({navigation}) {
-    const [activitiesList, setActivitiesList] = useState([]);
-    const {fetchDataDailyActivities, dailyActivitiesList} = DailyActivitiesDatabase();
+    const [dailyActivitiesList, setDailyActivitiesList] = useState([]);
     const date = getDate();
 
     useEffect(() => {
-        fetchDataDailyActivities(date);
+      fetchDataDailyActivities(date, (result) => setDailyActivitiesList(result));
     }, []);
-
-    const testAct = () => {
-        console.log(dailyActivitiesList);
-    }
 
     return (
         <View style={styles.container}>
@@ -46,7 +40,7 @@ export default function Activities({navigation}) {
                 )}
                 keyExtractor={(item) => item.id}
             />
-            <TouchableOpacity onPress={testAct} style={{marginBottom:50}}>
+            <TouchableOpacity onPress={() => navigation.navigate('Home')} style={{marginBottom:50}}>
                 <Text>Retour à l'accueil</Text>
             </TouchableOpacity>
             <TouchableOpacity onPress={() => navigation.navigate('AddActivities')} style={{marginBottom:50}}>

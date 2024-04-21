@@ -8,25 +8,20 @@ import Questionnaire from './components/screens/Questionnaire';
 import Activities from './components/screens/Activities';
 import AddActivities from './components/screens/AddActivities';
 import Loading from './components/screens/Loading';
-import Database from './components/Database';
 import Initializing from './components/screens/Initializing';
-import ActivitiesDatabase from './components/database/ActivitiesDatabase';
-import SymptomsDatabase from './components/database/SymptomsDatabase';
-import DailyActivitiesDatabase from './components/database/DailyActivitiesDatabase';
+import {fetchDataSymptoms} from './components/database/SymptomsDatabase';
+import {initializeDailyActivitiesDatabase} from './components/database/DailyActivitiesDatabase';
 
 const Tab = createBottomTabNavigator();
 
 export default function App() {
-  const {initializeDatabase,cleanDatabase} = Database();
-  const {initializeDatabaseActivities} = ActivitiesDatabase();
-  const {initializeDatabaseSymptoms, insertDataSymptoms, fetchDataSymptoms, clearDatabaseSymptoms, symptoms} = SymptomsDatabase();
-  const {initializeDailyActivitiesDatabase} = DailyActivitiesDatabase();
+  const [symptoms, setSymptoms] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     initializeDailyActivitiesDatabase();
     try {
-      fetchDataSymptoms();
+      fetchDataSymptoms(results => setSymptoms(results));
     } catch (error) {
       console.log('Error fetching symptoms', error);
     }

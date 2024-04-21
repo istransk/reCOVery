@@ -1,23 +1,20 @@
 import {symptoms, activities} from "../database/Symptoms";
 import React, { useState, useEffect  } from "react";
 import { Text, View, FlatList, TouchableOpacity, Button} from "react-native";
-import SymptomsDatabase from "../database/SymptomsDatabase";
-import ActivitiesDatabase from "../database/ActivitiesDatabase";
-import Database from '../Database';
+import {initializeDatabaseSymptoms, insertDataSymptoms, fetchDataSymptoms} from "../database/SymptomsDatabase";
+import {initializeDatabaseActivities, insertDataActivities} from "../database/ActivitiesDatabase";
+import { initializeCrashDatabase } from '../database/CrashDatabase';
 
 export default function Initializing({ navigation }) {
     const [symptomsIntensity, setSymptomsIntensity] = useState({});
     const [hasStarted, setHasStarted] = useState(false);
     const [isDone, setIsDone] = useState(false);
     const [currentSymptom, setCurrentSymptom] = useState(0);
-    const {initializeDatabaseSymptoms, insertDataSymptoms, fetchDataSymptoms} = SymptomsDatabase();
-    const {initializeDatabaseActivities, insertDataActivities} = ActivitiesDatabase();
-    const {initializeDatabase,cleanDatabase} = Database();
 
     useEffect(() => {
         initializeDatabaseSymptoms();
         initializeDatabaseActivities();
-        initializeDatabase();
+        initializeCrashDatabase();
     }, []);
     const handleIntensityChange = (symptom, intensity) => {
         setSymptomsIntensity(prevState => ({
@@ -68,10 +65,6 @@ export default function Initializing({ navigation }) {
             insertDataSymptoms(symptom, intensity);
         });
         navigation.navigate('Home');
-    }
-
-    const fetchData = () => {
-        fetchDataSymptoms();
     }
 
     const start = () => {

@@ -1,8 +1,7 @@
 import { FlatList, View, TouchableOpacity, Text, TextInput} from "react-native";
 import { useEffect, useState } from "react"; 
-import ActivitiesDatabase from "../database/ActivitiesDatabase";
-import DailyActivitiesDatabase from "../database/DailyActivitiesDatabase";
-import { activities } from "../database/Symptoms";
+import {insertDataActivities, fetchDataActivities} from "../database/ActivitiesDatabase";
+import {insertDataDailyActivities} from "../database/DailyActivitiesDatabase";
 
 function getDate() {
     const today = new Date();
@@ -21,8 +20,7 @@ function getDate() {
   }
 
 export default function AddActivities({navigation}) {
-    const {insertDataActivities, fetchDataActivities, activitiesList} = ActivitiesDatabase();
-    const {insertDataDailyActivities} = DailyActivitiesDatabase();
+    const [activitiesList, setActivitiesList] = useState([]); // [activities, setActivities
     const [activity, setActivity] = useState('');
     const [category, setCategory] = useState('');
     const [duration, setDuration] = useState(null);
@@ -30,14 +28,17 @@ export default function AddActivities({navigation}) {
     const date = getDate();
 
     useEffect(() => {
-        fetchDataActivities();
+        fetchDataActivities((result) => setActivitiesList(result));
     }, []);
 
     const selectActivity = (activity, category) => {
         setActivity(activity);
         setCategory(category);
         console.log(activity);
+        console.log();
     }
+
+    
 
     return (
         <View style={{marginTop:50}}>
