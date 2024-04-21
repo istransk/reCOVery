@@ -1,9 +1,10 @@
 import {symptoms, activities} from "../database/Symptoms";
-import React, { useState, useEffect  } from "react";
+import { useState, useEffect  } from "react";
 import { Text, View, FlatList, TouchableOpacity, Button} from "react-native";
 import {initializeDatabaseSymptoms, insertDataSymptoms, fetchDataSymptoms} from "../database/SymptomsDatabase";
 import {initializeDatabaseActivities, insertDataActivities} from "../database/ActivitiesDatabase";
 import { initializeCrashDatabase } from '../database/CrashDatabase';
+import styles from '../styles/style';
 
 export default function Initializing({ navigation }) {
     const [symptomsIntensity, setSymptomsIntensity] = useState({});
@@ -27,17 +28,17 @@ export default function Initializing({ navigation }) {
         const gradeButtons = [0, 1, 2, 3].map(intensity => (
             <TouchableOpacity
                 key={intensity}
-                style={{ padding: 5, backgroundColor: symptomsIntensity[item] === intensity ? 'blue' : 'grey', borderRadius: 5, margin: 2 }}
+                style={{ marginHorizontal: '8%', padding: 10, backgroundColor: symptomsIntensity[item] === intensity ? 'blue' : 'grey', borderRadius: 5, margin: 2 }}
                 onPress={() => handleIntensityChange(item, intensity)}
             >
-                <Text style={{ color: 'white' }}>{intensity}</Text>
+                <Text style={styles.buttonText}>{intensity}</Text>
             </TouchableOpacity>
         ));
 
         return (
-            <View style={{ marginBottom: 10 }}>
-                <Text>{item}</Text>
-                <View style={{ flexDirection: 'row', marginTop: 5 }}>
+            <View >
+                <Text style={styles.text}>{item}</Text>
+                <View style={styles.buttonGradeContainer}>
                     {gradeButtons}
                 </View>
             </View>
@@ -79,25 +80,29 @@ export default function Initializing({ navigation }) {
     }
 
     return (
-        <View>
+        <View style={styles.container}>
             {!hasStarted &&
-            (<View>
-            <Text>Bienvenue sur l'application reCOVery! Avant de commencer à aller sur l'application, je te laisserai 
-                répondre à quelques questions afin d'évaluer tes symptômes. {"\n"}
-                Pour chaque symptôme, tu devras indiquer son intensité sur une échelle de 0 à 3. {"\n"}
-                0 = Aucun symptôme, 1 = Symptôme léger (n'affecte pas la vie quotidienne) {"\n"}
-                2 = Symptôme modéré (affecte la vie quotidienne dans une certaine mesure) {"\n"}
-                3 = Symptôme sévère (affecte tous les aspects de la vie quotidienne ; perturbe la vie) {"\n"}
-                Dès que tu es prêt, clique sur le bouton ci-dessous pour commencer. 
-            </Text>
-            <TouchableOpacity onPress={start}>
-                <Text>Commencer</Text>
-            </TouchableOpacity>
-            <Button title="Home" onPress={() => navigation.navigate('Home')} />
-            </View>
+            (<>
+                <View style={styles.rectangle}>
+                    <Text style={styles.text}>Bienvenue sur l'application reCOVery! Pour commencer, je te laisserai 
+                        répondre à quelques questions afin d'évaluer tes symptômes. {"\n"}
+                        Pour chaque symptôme, tu devras indiquer son intensité sur une échelle de 0 à 3. {"\n"}
+                        {"\n"}
+                        0 = Aucun symptôme, {"\n"}
+                        1 = Symptôme léger (n'affecte pas la vie quotidienne) {"\n"}
+                        2 = Symptôme modéré (affecte la vie quotidienne dans une certaine mesure) {"\n"}
+                        3 = Symptôme sévère (affecte tous les aspects de la vie quotidienne ; perturbe la vie) {"\n"}
+                        {"\n"}
+                        Dès que tu es prêt, clique sur le bouton ci-dessous. 
+                    </Text>
+                </View>
+                <TouchableOpacity style={styles.button} onPress={start}>
+                <Text style={styles.buttonText}>COMMENCER</Text>
+                </TouchableOpacity>
+            </>
             )}
             {hasStarted && !isDone && (
-            <View style={{ marginTop: 50 }}>
+            <View >
                 {renderSymptomItem({ item: symptoms[currentSymptom] })}
 
                 
