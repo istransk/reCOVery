@@ -1,11 +1,27 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, Button, TouchableOpacity } from 'react-native';
+import { fetchDataSymptoms } from '../database/SymptomsDatabase';
+import { fetchAllDataDailyActivities } from '../database/DailyActivitiesDatabase';
+import { useEffect, useState } from 'react';
 
 export default function Results({navigation}) {
+  const [symptoms, setSymptoms] = useState([]);
+  const [activities, setActivities] = useState([]);
+
+  useEffect(() => {
+    fetchDataSymptoms(result => setSymptoms(result));
+    fetchAllDataDailyActivities(result => setActivities(result));
+  }, []);
+
+  const showData = () => {
+    console.log(symptoms);
+    console.log(activities);
+  } 
   return (
     <View style={styles.container}>
       <Text>Open up App.js to start working on your app!</Text>
       <StatusBar style="auto" />
+      <Button title="Data" onPress={showData} />
       <TouchableOpacity style={styles.resultsButton} onPress={() => navigation.navigate('Home')}>
         <Text style={styles.menuText}>HOME</Text>
       </TouchableOpacity>

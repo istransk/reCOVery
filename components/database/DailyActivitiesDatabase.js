@@ -40,5 +40,19 @@ const fetchDataDailyActivities = (date, rollback) => {
     });
 }
 
+const fetchAllDataDailyActivities = (rollback) => {
+    db.transaction(tx => {
+        tx.executeSql(
+            'SELECT id, activity, category, duration, comment FROM DailyActivities;',
+            [],
+            (_, { rows }) => {
+                rollback(rows._array);
+            },
+            (_, error) => {
+                console.log('Error fetching all activities', error);
+            }
+        );
+    });
+}
 
-export {initializeDailyActivitiesDatabase, insertDataDailyActivities, fetchDataDailyActivities}
+export {initializeDailyActivitiesDatabase, insertDataDailyActivities, fetchDataDailyActivities, fetchAllDataDailyActivities}

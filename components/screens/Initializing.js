@@ -136,7 +136,7 @@ export default function Initializing({ navigation }) {
                     <TouchableOpacity onPress={saveAnswersToDatabase}>
                         <Text>OK</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={fetchData}>
+                    <TouchableOpacity>
                         <Text>Modifier</Text>
                     </TouchableOpacity>
                     </View>
