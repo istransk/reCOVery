@@ -37,17 +37,12 @@ export default function App() {
   return (
     <NavigationContainer>
       <Tab.Navigator screenOptions={{headerShown: false,tabBarStyle: {display:"none"}}}>
-        {symptoms.length > 0 ?
-          (<>
+        {symptoms.length < 1 && <Tab.Screen name="Initializing" component={Initializing} />}
             <Tab.Screen name="Home" component={Home} />
             <Tab.Screen name="Questionnaire" component={Questionnaire} />
             <Tab.Screen name="Results" component={Results} />
             <Tab.Screen name="Activities" component={Activities} />
             <Tab.Screen name="AddActivities" component={AddActivities} />
-          </>)
-          : 
-          (<Tab.Screen name="Initializing" component={Initializing} />) 
-        }
           
       </Tab.Navigator>
     </NavigationContainer>
