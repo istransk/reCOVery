@@ -1,6 +1,6 @@
 
 const symptoms = ["Éssouflement", "Toux/sensibilité de la gorge", "Fatigue", "Odeur/goût", "Douleurs", "Cognition", "Palpitations/étourdissements", "Communication", "Sommeil"];
-const category = ["Régénérant", "Fatigant"];
+const categories = ["Régénérant", "Fatigant"];
 const activities = [
     { name: "Douche", category: "Fatigant" },
     { name: "Marche en pleine nature", category: "Régénérant" },
@@ -16,4 +16,4 @@ const activities = [
     { name: "Sieste", category: "Régénérant" },
     { name: "Cohérance cardiaque", category: "Régénérant" },
   ];
-export {symptoms, category, activities};
+export {symptoms, categories, activities};

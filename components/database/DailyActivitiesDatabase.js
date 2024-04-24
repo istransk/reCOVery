@@ -9,6 +9,14 @@ const initializeDailyActivitiesDatabase = () => {
     }, null, console.log('Table DailyActivities initialized'));
 }
 
+const clearDailyActivitiesDatabase = () => {
+    db.transaction(tx => {
+        tx.executeSql(
+            'DROP TABLE IF EXISTS DailyActivities;'
+        );
+    }, null, console.log('Table DailyActivities cleared'));
+}
+
 const insertDataDailyActivities = (activity, category, duration, date, comment) => {
     db.transaction(tx => {
         tx.executeSql(
@@ -40,5 +48,20 @@ const fetchDataDailyActivities = (date, rollback) => {
     });
 }
 
+const fetchDataAllDailyActivities = (rollback) => {
+    db.transaction(tx => {
+        tx.executeSql(
+            'SELECT id, activity, category, duration, date, comment FROM DailyActivities;',
+            [],
+            (_, { rows }) => {
+                rollback(rows._array);
+            },
+                (_, error) => {
+                console.log('Error fetching all activities', error);
+            }
+        );
+    });
+}
 
-export {initializeDailyActivitiesDatabase, insertDataDailyActivities, fetchDataDailyActivities}
+
+export {initializeDailyActivitiesDatabase, insertDataDailyActivities, fetchDataDailyActivities, fetchDataAllDailyActivities, clearDailyActivitiesDatabase}

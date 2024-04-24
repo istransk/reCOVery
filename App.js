@@ -9,7 +9,7 @@ import AddActivities from './components/screens/AddActivities';
 import Loading from './components/screens/Loading';
 import Initializing from './components/screens/Initializing';
 import {fetchDataSymptoms} from './components/database/SymptomsDatabase';
-import {initializeDailyActivitiesDatabase} from './components/database/DailyActivitiesDatabase';
+import {initializeDailyActivitiesDatabase, clearDailyActivitiesDatabase} from './components/database/DailyActivitiesDatabase';
 
 const Tab = createBottomTabNavigator();
 
