@@ -1,7 +1,8 @@
 import { FlatList, View, TouchableOpacity, Text, TextInput} from "react-native";
-import { useEffect, useState } from "react"; 
-import {insertDataActivities, fetchDataActivities} from "../database/ActivitiesDatabase";
-import {insertDataDailyActivities} from "../database/DailyActivitiesDatabase";
+import { useFocusEffect } from '@react-navigation/native';
+import { useEffect, useState, useCallback } from "react"; 
+import {insertDataActivities, fetchDataActivities} from "../../database/ActivitiesDatabase";
+import {insertDataDailyActivities} from "../../database/DailyActivitiesDatabase";
 
 function getDate() {
     const today = new Date();
@@ -30,6 +31,14 @@ export default function AddActivities({navigation}) {
     useEffect(() => {
         fetchDataActivities((result) => setActivitiesList(result));
     }, []);
+
+    useFocusEffect(
+        useCallback(() => {
+            fetchDataActivities((result) => setActivitiesList(result));
+        }, [])
+    );
+
+    
 
     const selectActivity = (activity, category) => {
         setActivity(activity);
@@ -73,6 +82,9 @@ export default function AddActivities({navigation}) {
                 )}
                 keyExtractor={(item) => item.id}
             />
+            <TouchableOpacity onPress={() => navigation.navigate('AddNewActivity')}>
+                <Text>Ajouter une nouvelle activité</Text>
+            </TouchableOpacity>
            
         </View>
     );

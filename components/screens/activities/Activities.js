@@ -1,6 +1,6 @@
 import { Text, View, StyleSheet, FlatList, TouchableOpacity} from 'react-native';
 import { useEffect, useState } from 'react';
-import {fetchDataDailyActivities} from '../database/DailyActivitiesDatabase';
+import {fetchDataDailyActivities} from '../../database/DailyActivitiesDatabase';
 
 function getDate() {
     const today = new Date();
