@@ -10,6 +10,7 @@ import Loading from './components/screens/Loading';
 import Initializing from './components/screens/Initializing';
 import {fetchDataSymptoms} from './components/database/SymptomsDatabase';
 import {initializeDailyActivitiesDatabase} from './components/database/DailyActivitiesDatabase';
+import { initializeDailySymptomsDatabase } from './components/database/DailySymptomsDatabase';
 
 const Tab = createBottomTabNavigator();
 
@@ -19,6 +20,7 @@ export default function App() {
 
   useEffect(() => {
     initializeDailyActivitiesDatabase();
+    initializeDailySymptomsDatabase();
     try {
       fetchDataSymptoms(results => setSymptoms(results));
     } catch (error) {

@@ -55,4 +55,6 @@ const fetchAllDataDailyActivities = (rollback) => {
     });
 }
 
+
+
 export {initializeDailyActivitiesDatabase, insertDataDailyActivities, fetchDataDailyActivities, fetchAllDataDailyActivities}

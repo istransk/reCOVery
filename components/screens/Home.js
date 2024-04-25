@@ -1,6 +1,7 @@
 import { StyleSheet, Text, View, Button, Animated, TouchableWithoutFeedback, TouchableOpacity, FlatList } from 'react-native';
 import {useEffect, useState, useContext} from 'react';
 import {fetchDataIsCrash, insertCrashData, updateCrashData, fetchDataCrash, isCrash} from '../database/CrashDatabase';
+import { insertDataDailySymptoms } from '../database/DailySymptomsDatabase';
 
 function getDate() {
   const today = new Date();
@@ -33,7 +34,7 @@ export default function Home({ navigation }) {
     fetchDataIsCrash((result) => {
       setHasCrashed(result);
       console.log('This is a hasCrashed', result);
-  });
+    });
   }, []);
 
   // Function to handle layout event and update buttonWidth and buttonHeight

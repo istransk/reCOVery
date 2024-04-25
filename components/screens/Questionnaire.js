@@ -1,16 +1,39 @@
-import { StyleSheet, Text, View, Button, FlatList, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, Button, FlatList, TouchableOpacity, TextInput } from 'react-native';
 import { useEffect, useState} from 'react';
-import SymptomsDatabase from '../database/SymptomsDatabase';
+import { fetchDataSymptoms } from '../database/SymptomsDatabase';
+import styles from '../styles/style';
+import { insertDataDailySymptoms, fetchDataDailySymptoms } from '../database/DailySymptomsDatabase';
+
+function getDate() {
+  const today = new Date();
+  const month = today.getMonth() + 1;
+  const year = today.getFullYear();
+  const date = today.getDate();
+  if (month < 10 && date < 10) {
+    return `${year}-0${month}-0${date}`;
+  } else if (month < 10) {
+    return `${year}-0${month}-${date}`;
+  } else if (date < 10) {
+    return `${year}-${month}-0${date}`;
+  } else {
+    return `${year}-${month}-${date}`;
+  }
+}
 
 export default function Questionnaire({navigation}) {
-  const {fetchDataSymptoms, symptoms} = SymptomsDatabase();
+  const [symptoms, setSymptoms] = useState([]);
   const [sortedSymptoms, setSortedSymptoms] = useState([]);
   const [currentSymptomIndex, setCurrentSymptomIndex] = useState(0);
   const [symptomsIntensity, setSymptomsIntensity] = useState({});
+  const [symptomComments, setSymptomComments] = useState({});
+  const [hasAnswered, setHasAnswered] = useState(false);
+  const [data, setData] = useState([]);
+  const date = getDate();
 
 
   useEffect(() => {
-    fetchDataSymptoms();
+    fetchDataSymptoms(result => setSymptoms(result));
+    fetchDataDailySymptoms(result => setData(result));
   }, []);
 
   useEffect(() => {
@@ -25,11 +48,10 @@ export default function Questionnaire({navigation}) {
     setSortedSymptoms(filteredSymptoms.sort((a, b) => b.intensity - a.intensity));
   } , [symptoms]);
 
-  
-
   const goToNextSymptom = () => {
     if (currentSymptomIndex < sortedSymptoms.length - 1) {
       setCurrentSymptomIndex(currentSymptomIndex + 1);
+      console.log(Object.keys(symptomsIntensity).length === 0);
     }
   };
 
@@ -40,9 +62,17 @@ export default function Questionnaire({navigation}) {
   };
 
   const handleIntensityChange = (symptom, intensity) => {
+    setHasAnswered(true);
     setSymptomsIntensity(prevState => ({
         ...prevState,
         [symptom]: intensity
+    }));
+  };
+
+  const handleCommentChange = (symptom, comment) => {
+    setSymptomComments(prevState => ({
+        ...prevState,
+        [symptom]: comment
     }));
   };
 
@@ -62,25 +92,66 @@ export default function Questionnaire({navigation}) {
       <View>
         <Text>{item.symptom}</Text>
         <View style={{ flexDirection: 'row', marginTop: 5 }}>
-                    {gradeButtons}
+          {gradeButtons}
         </View>
+        <TextInput
+                    value={symptomComments[item.symptom] || ''}
+                    onChangeText={comment => handleCommentChange(item.symptom, comment)}
+                    placeholder="Enter comment"
+                    style={{ borderWidth: 1, borderColor: 'grey', borderRadius: 5, padding: 5, marginTop: 5 }}
+                    multiline={true}
+        />
       </View>
     );
     }
   };
 
+  const saveAnswersToDatabase = () => {
+    Object.keys(symptomsIntensity).forEach(symptom => {
+      insertDataDailySymptoms(symptom, symptomsIntensity[symptom], date, symptomComments[symptom]);
+    });
+  };
+
+  
 
   return (
     <View style={styles.container}>
       
+      {console.log(currentSymptomIndex)}
       {renderQuestion(sortedSymptoms[currentSymptomIndex])}
           
-          <TouchableOpacity onPress={goToPreviousSymptom}>
-            <Text>Précédent</Text>
+          
+          <TouchableOpacity 
+            onPress={goToPreviousSymptom}
+            disabled={currentSymptomIndex === 0}
+            style={[
+              {
+                  padding: 10,
+                  borderRadius: 5,
+                  margin: 10,
+                  backgroundColor: currentSymptomIndex=== 0 ? 'lightgrey' : 'grey' ,
+              },
+          ]}
+          >
+            <Text style={{color: 'white' }}>Précédent</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={goToNextSymptom}>
-            <Text>Suivant</Text>
+          {console.log(symptomsIntensity)}
+          <TouchableOpacity 
+            onPress={goToNextSymptom}
+            disabled={Object.keys(symptomsIntensity).length === currentSymptomIndex || (currentSymptomIndex === sortedSymptoms.length - 1)}
+            style={[
+              {
+                  padding: 10,
+                  borderRadius: 5,
+                  margin: 10,
+                  backgroundColor: Object.keys(symptomsIntensity).length === currentSymptomIndex || currentSymptomIndex === sortedSymptoms.length - 1  ? 'lightgrey' : 'grey' ,
+              },
+          ]}
+          >
+            <Text style={{ color: 'white' }}>Suivant</Text>
           </TouchableOpacity>
+          <Button title="Save" onPress={saveAnswersToDatabase} />
+          <Button title="Data" onPress={() => console.log(data)} />
 
       <FlatList
         data={sortedSymptoms}
@@ -89,28 +160,16 @@ export default function Questionnaire({navigation}) {
         )}
         keyExtractor={(item) => item.symptom}
       />
+
+      
       
    
-      <View style={styles.buttonContainer}>
-        <Button title="Retour" onPress={() => navigation.navigate('Home')} color={'grey'} />
-      </View>
+    
+      <TouchableOpacity style={styles.bottomButton} onPress={() => navigation.navigate('Home')}>
+        <Text style={styles.bottomButtonText}>HOME</Text>
+      </TouchableOpacity>
     </View>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    marginTop: 50,
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-  },
-  buttonContainer: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    width: '100%',
-  },
-  
-});
+
