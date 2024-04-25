@@ -1,21 +1,41 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, Button, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, Button, TouchableOpacity, ScrollView } from 'react-native';
 import { useEffect, useState } from 'react';
 import { fetchDataSymptoms } from '../database/SymptomsDatabase';
 import { fetchAllDataDailyActivities } from '../database/DailyActivitiesDatabase';
-import { BarChart } from 'react-native-gifted-charts';
+import { fetchDataDailySymptoms } from '../database/DailySymptomsDatabase';
+import { BarChart, LineChart } from 'react-native-gifted-charts';
 import { categories } from '../database/Symptoms';
+import {dataDailySymptomsTreatment, dataDailyActivitiesTreatment} from '../utils/DataTreatments';
 
 export default function Results({navigation}) {
   const [listDailyActivities, setListDailyActivities] = useState([]);
   const [listSymptoms, setListSymptoms] = useState([]);
   const [dataActivities, setDataActivities] = useState([]);
-  const [data, setData] = useState([]);
-
+  const [dataSymptoms, setDataSymptoms] = useState([]);
   useEffect(() => {
     fetchDataSymptoms(results => setListSymptoms(results));
     fetchAllDataDailyActivities(results => setListDailyActivities(results));
+    fetchDataDailySymptoms(results => setDataSymptoms(results));
   }, []);
+
+
+  const data = [
+    {"comment": null, "date": "2024-04-24", "id": 1, "intensity": 2, "symptom": "Fatigue"},
+    {"comment": null, "date": "2024-04-24", "id": 2, "intensity": 2, "symptom": "Palpitations/étourdissements"},
+    {"comment": null, "date": "2024-04-24", "id": 3, "intensity": 2, "symptom": "Sommeil"},
+    {"comment": null, "date": "2024-04-24", "id": 4, "intensity": 2, "symptom": "Éssouflement"},
+    {"comment": null, "date": "2024-04-24", "id": 5, "intensity": 2, "symptom": "Odeur/goût"},
+    {"comment": null, "date": "2024-04-24", "id": 6, "intensity": 2, "symptom": "Douleurs"},
+    {"comment": null, "date": "2024-04-24", "id": 7, "intensity": 2, "symptom": "Cognition"},
+    {"comment": null, "date": "2024-04-25", "id": 8, "intensity": 3, "symptom": "Éssouflement"},
+    {"comment": null, "date": "2024-04-25", "id": 9, "intensity": 2, "symptom": "Odeur/goût"},
+    {"comment": null, "date": "2024-04-25", "id": 10, "intensity": 1, "symptom": "Douleurs"},
+    {"comment": null, "date": "2024-04-25", "id": 11, "intensity": 0, "symptom": "Cognition"},
+
+];
+
+const transformedData = dataDailySymptomsTreatment(data);
 
   const activities = [
     {"activity": "Lecture", "category": "Fatigant", "comment": "No", "date": "2024-04-22", "duration": 20, "id": 1},
@@ -37,44 +57,22 @@ export default function Results({navigation}) {
     {"activity": "Cooking", "category": "Fatigant", "comment": "Cooking dinner", "date": "2024-06-10", "duration": 45, "id": 15},
     {"activity": "Gardening", "category": "Fatigant", "comment": "Planting flowers", "date": "2024-06-11", "duration": 60, "id": 16},
     {"activity": "Yoga", "category": "Régénérant", "comment": "Evening yoga practice", "date": "2024-06-12", "duration": 50, "id": 17},
-    {"activity": "Reading", "category": "Régénérant", "comment": "Reading before bed", "date": "2024-06-13", "duration": 40, "id": 18}
+    {"activity": "Reading", "category": "Régénérant", "comment": "Reading before bed", "date": "2024-06-13", "duration": 40, "id": 18},
+    {"activity": "Reading", "category": "Régénérant", "comment": "Reading before bed", "date": "2024-07-13", "duration": 40, "id": 19},
+    {"activity": "Peinture", "category": "Régénérant", "comment": "Peinture artistique", "date": "2024-07-24", "duration": 45, "id": 9},
+    {"activity": "Lecture", "category": "Régénérant", "comment": "Lecture avant le coucher", "date": "2024-07-25", "duration": 30, "id": 10},
+    {"activity": "Running", "category": "Fatigant", "comment": "Morning run", "date": "2024-08-15", "duration": 45, "id": 11},
+    {"activity": "Hiking", "category": "Fatigant", "comment": "Exploring nature trails", "date": "2024-08-16", "duration": 60, "id": 12},
+    {"activity": "Yoga", "category": "Régénérant", "comment": "Morning yoga session", "date": "2024-08-17", "duration": 50, "id": 13},
+    {"activity": "Reading", "category": "Régénérant", "comment": "Reading in the garden", "date": "2024-08-18", "duration": 40, "id": 14},
+    {"activity": "Cooking", "category": "Fatigant", "comment": "Cooking dinner", "date": "2024-09-10", "duration": 45, "id": 15},
+    {"activity": "Gardening", "category": "Fatigant", "comment": "Planting flowers", "date": "2024-09-11", "duration": 60, "id": 16},
+    {"activity": "Yoga", "category": "Régénérant", "comment": "Evening yoga practice", "date": "2024-09-12", "duration": 50, "id": 17},
+    {"activity": "Reading", "category": "Régénérant", "comment": "Reading before bed", "date": "2024-10-13", "duration": 40, "id": 18},
+    {"activity": "Hiking", "category": "Fatigant", "comment": "Exploring nature trails", "date": "2024-11-16", "duration": 60, "id": 12},
+    {"activity": "Yoga", "category": "Régénérant", "comment": "Morning yoga session", "date": "2024-12-17", "duration": 50, "id": 13},
   ];
-  
-  
-
-  const dataDailyActivitiesTreatment = (activities) => {
-    const dataTreated = {}
-    activities.forEach(activity => {
-      const { category, date, duration } = activity;
-      const [year, month, day] = date.split('-');
-
-      if (!dataTreated[year]) {
-        dataTreated[year] = {};
-    }
     
-    if (!dataTreated[year][month]) {
-        dataTreated[year][month] = {};
-    }
-    
-    if (!dataTreated[year][month][category]) {
-        dataTreated[year][month][category] = 0;
-    }
-
-    dataTreated[year][month][category] += duration;
-
-    if (!dataTreated[year][month][day]) {
-        dataTreated[year][month][day] = {};
-    }
-
-    if (!dataTreated[year][month][day][category]) {
-        dataTreated[year][month][day][category] = 0;
-    }
-
-    dataTreated[year][month][day][category] += duration;
-    });
-    return dataTreated;
-  }
-  
   const dataChartMonthlyActivitiesPerCategory = (category, data, yearWanted) => {
     const dataChart = [];
     let monthName = '';
@@ -123,21 +121,29 @@ export default function Results({navigation}) {
 
   }
 
+  
   const dataChartMonthlyActivities = (data, year) => {
-    dataChartRegenerating = dataChartMonthlyActivitiesPerCategory(categories[1], data, year);
-    dataChartTiring = dataChartMonthlyActivitiesPerCategory(categories[0], data, year);
+    dataChartRegenerating = dataChartMonthlyActivitiesPerCategory(categories[0], data, year);
+    dataChartTiring = dataChartMonthlyActivitiesPerCategory(categories[1], data, year);
     const barData = [];
-    /*
-      {
-          value: 40,
-          label: 'Jan',
-          spacing: 2,
-          labelWidth: 30,
-          labelTextStyle: {color: 'gray'},
-          frontColor: '#177AD5',
-        },
-        {value: 20, frontColor: '#ED6665'},
-    */
+    const monthOrder = [
+      "Janvier", "Février", "Mars", "Avril", "Mai", "Juin", 
+      "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"
+    ];
+    
+    // Sort the dataChartRegenerating array based on the month order
+    dataChartRegenerating.sort((a, b) => {
+      const monthIndexA = monthOrder.indexOf(a.label);
+      const monthIndexB = monthOrder.indexOf(b.label);
+      return monthIndexA - monthIndexB;
+    });
+    dataChartTiring.sort((a, b) => {
+      const monthIndexA = monthOrder.indexOf(a.label);
+      const monthIndexB = monthOrder.indexOf(b.label);
+      return monthIndexA - monthIndexB;
+    });
+    
+    console.log(dataChartRegenerating);
     for (let i = 0; i < dataChartRegenerating.length; i++) {
       barData.push({
         value: dataChartRegenerating[i].value, 
@@ -161,7 +167,7 @@ export default function Results({navigation}) {
             fontWeight: 'bold',
             textAlign: 'center',
           }}>
-          Activités de {year}
+          {year}
         </Text>
       
           <View style={{flexDirection: 'row', alignItems: 'center'}}>
@@ -197,7 +203,7 @@ export default function Results({navigation}) {
   }
 
     return (
-      <View>
+      <View >
         {renderTitle()}
         <BarChart 
           data={barData} 
@@ -205,18 +211,92 @@ export default function Results({navigation}) {
           spacing={24}
           xAxisThickness={0}
           yAxisThickness={0}
+          showLine
+          secondaryYAxis
+          lineConfig={{
+            initialSpacing: 32,
+            lineWidth: 1,
+            spacing: 41,
+            thickness: 1,
+          }}
+          lineData={[
+            {value: 20},
+            {value: 40},
+            {value: 2},
+            {value: 4},
+            {value: 6},
+            {value: 8},
+            {value: 30},
+          ]}
+          
         />
       </View>
     )
+  }
+
+  const dataChartDailySymptoms = (data, yearWanted, monthWanted) => {
+    const dataChart = [];
+    for (const year in data) {
+      if (year == yearWanted){
+        for (const month in data[year]) {
+          if (month == monthWanted){
+            for (const day in data[year][month]) {
+              if (day !=="averageIntensity"){
+                const value = data[year][month][day].averageIntensity;
+                dataChart.push({ label: day, value: value });
+              }
+            }
+          }
+          break;
+        }
+        break;
+      }
+    }
+
+    return dataChart;
+
+  }
+
+  const dataChartMonthlySymptoms = (data, yearWanted) => {
+    const dataChart = [];
+    let monthName = '';
+    for (const year in data) {
+      if (year == yearWanted){
+        for (const month in data[year]) {
+          switch (month) {
+            case '01': monthName = 'Janvier'; break;
+            case '02': monthName = 'Février'; break;
+            case '03': monthName = 'Mars'; break;
+            case '04': monthName = 'Avril'; break;
+            case '05': monthName = 'Mai'; break;
+            case '06': monthName = 'Juin'; break;
+            case '07': monthName = 'Juillet'; break;
+            case '08': monthName = 'Août'; break;
+            case '09': monthName = 'Septembre'; break;
+            case '10': monthName = 'Octobre'; break;
+            case '11': monthName = 'Novembre'; break;
+            case '12': monthName = 'Décembre'; break;
+          }
+          const value = data[year][month]['averageIntensity'];
+          dataChart.push({ label: monthName, value: value });
+        }
+      }
+    }
+    return dataChart;
   }
 
   
 
 
   return (
-    <View style={styles.container}>
-      {console.log(dataChartDailyActivities(categories[0], dataDailyActivitiesTreatment(activities), 2024, '04'))}
+    <View  style={styles.container} >
+      <ScrollView style={{marginBottom:50, width:'100%'}}>
+        
+      {console.log(dataChartDailySymptoms(transformedData, 2024, '04'))}
+      <LineChart data={dataChartDailySymptoms(transformedData, 2024, '04')} />
+      <LineChart data={dataChartMonthlySymptoms(transformedData, 2024)} />
      {dataChartMonthlyActivities(dataDailyActivitiesTreatment(activities), 2024)}
+     </ScrollView>
       <TouchableOpacity style={styles.resultsButton} onPress={() => navigation.navigate('Home')}>
         <Text style={styles.menuText}>HOME</Text>
       </TouchableOpacity>

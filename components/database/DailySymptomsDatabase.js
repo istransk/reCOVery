@@ -30,7 +30,21 @@ const fetchDataDailySymptoms = (rollback) => {
             [],
             (_, { rows }) => {
                 rollback(rows._array);
-                console.log('Fetched symptoms', rows._array);
+            },
+            (_, error) => {
+                console.log('Error fetching symptoms', error);
+            }
+        );
+    });
+}
+
+const fetchDataDailySymptomsByDate = (date, rollback) => {
+    db.transaction(tx => {
+        tx.executeSql(
+            'SELECT id, symptom, intensity, comment, date FROM DailySymptoms WHERE date = ?;',
+            [date],
+            (_, { rows }) => {
+                rollback(rows._array);
             },
             (_, error) => {
                 console.log('Error fetching symptoms', error);
@@ -47,4 +61,4 @@ const clearDailySymptomsDatabase = () => {
     }, null, console.log('Table DailySymptoms cleared'));
 }
 
-export {initializeDailySymptomsDatabase, insertDataDailySymptoms, fetchDataDailySymptoms, clearDailySymptomsDatabase}
+export {initializeDailySymptomsDatabase, insertDataDailySymptoms, fetchDataDailySymptoms, clearDailySymptomsDatabase, fetchDataDailySymptomsByDate}
