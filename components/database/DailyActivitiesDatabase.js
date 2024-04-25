@@ -9,6 +9,14 @@ const initializeDailyActivitiesDatabase = () => {
     }, null, console.log('Table DailyActivities initialized'));
 }
 
+const clearDailyActivitiesDatabase = () => {
+    db.transaction(tx => {
+        tx.executeSql(
+            'DROP TABLE IF EXISTS DailyActivities;'
+        );
+    }, null, console.log('Table DailyActivities cleared'));
+}
+
 const insertDataDailyActivities = (activity, category, duration, date, comment) => {
     db.transaction(tx => {
         tx.executeSql(
