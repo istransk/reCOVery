@@ -2,6 +2,7 @@ import { FlatList, View, TouchableOpacity, Text, TextInput} from "react-native";
 import { useEffect, useState } from "react"; 
 import {insertDataActivities, fetchDataActivities} from "../database/ActivitiesDatabase";
 import {insertDataDailyActivities} from "../database/DailyActivitiesDatabase";
+import styles from "../styles/style";
 
 function getDate() {
     const today = new Date();

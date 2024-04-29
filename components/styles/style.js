@@ -9,7 +9,7 @@ const styles = StyleSheet.create({
     }),
     marginTop: 50,
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#dcc1a7',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -24,8 +24,8 @@ const styles = StyleSheet.create({
   crashButton: {
     position: 'absolute',
     top: 100,
-    backgroundColor: 'white', 
-    borderColor: 'grey', 
+    backgroundColor: '#F7E9E3', 
+    borderColor: '#72665A', 
     borderWidth: 1, 
     borderRadius: 8, 
     shadowColor: '#000', 
@@ -41,7 +41,7 @@ const styles = StyleSheet.create({
   bottomButton: {
     position: 'absolute',
     bottom: 0,
-    backgroundColor: 'grey',
+    backgroundColor: '#72665A',
     width: '100%',
     alignItems: 'center',
     justifyContent: 'center',
@@ -50,13 +50,13 @@ const styles = StyleSheet.create({
   button: {
     marginTop: 30,
     margin: 10,
-    backgroundColor: '#CCCCCC', // Grey background color
+    backgroundColor: '#72665A', // Grey background color
     borderRadius: 4,
     paddingVertical: 12,
     paddingHorizontal: 16,
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: '#000', 
+    shadowColor: '#5c5249', 
     shadowOffset: { width: 0, height: 2 }, 
     shadowOpacity: 0.25, 
     shadowRadius: 4, 
@@ -67,10 +67,10 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     fontSize: 20, // Adjust font size
-    color: '#333333', // Change text color to black
+    color: '#F7E9E3', // Change text color to black
   },
   bottomButtonText:{
-    color: 'white',
+    color: '#F7E9E3',
     fontSize: 17,
     fontWeight: '300',
   },
@@ -82,16 +82,14 @@ const styles = StyleSheet.create({
   },
 
   rectangle: {
-    backgroundColor: '#E0E0E0',
+    backgroundColor: '#D0AC8A',
     padding: 20,
     borderRadius: 10,
-    borderWidth: 1,
-    borderColor: '#CCCCCC',
   },
 
   text: {
     fontSize: 16,
-    color: '#333333',
+    color: '#000',
     textAlign: 'left',
   },
   buttonGradeContainer: {

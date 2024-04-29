@@ -5,6 +5,7 @@ import { fetchDataSymptoms } from '../database/SymptomsDatabase';
 import { fetchAllDataDailyActivities } from '../database/DailyActivitiesDatabase';
 import { BarChart } from 'react-native-gifted-charts';
 import { categories } from '../database/Symptoms';
+import styles from '../styles/style';
 
 export default function Results({navigation}) {
   const [listDailyActivities, setListDailyActivities] = useState([]);
@@ -223,34 +224,3 @@ export default function Results({navigation}) {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  buttonContainer: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    width: '100%',
-  },
-  menuText:{
-    color: 'white',
-    fontSize: 17,
-    fontWeight: '300',
-  },
-  resultsButton: {
-    position: 'absolute',
-    bottom: 0,
-    backgroundColor: 'grey',
-    width: '100%',
-    alignItems: 'center',
-    justifyContent: 'center',
-    height: 50,
-  },
-  
-});
