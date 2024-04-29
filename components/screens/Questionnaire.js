@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View, Button, FlatList, TouchableOpacity, TextInput } from 'react-native';
 import { useEffect, useState} from 'react';
 import { fetchDataSymptoms } from '../database/SymptomsDatabase';
-import styles from '../styles/style';
+import styles from '../styles/Style';
 import { insertDataDailySymptoms, fetchDataDailySymptoms } from '../database/DailySymptomsDatabase';
 
 function getDate() {

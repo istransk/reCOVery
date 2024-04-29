@@ -4,8 +4,9 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Home from './components/screens/Home';
 import Results from './components/screens/Results';
 import Questionnaire from './components/screens/Questionnaire';
-import Activities from './components/screens/Activities';
-import AddActivities from './components/screens/AddActivities';
+import Activities from './components/screens/activities/Activities';
+import AddActivities from './components/screens/activities/AddDailyActivity';
+import AddNewActivity from './components/screens/activities/AddNewActivity';
 import Loading from './components/screens/Loading';
 import Initializing from './components/screens/Initializing';
 import {fetchDataSymptoms} from './components/database/SymptomsDatabase';
@@ -45,6 +46,7 @@ export default function App() {
             <Tab.Screen name="Results" component={Results} />
             <Tab.Screen name="Activities" component={Activities} />
             <Tab.Screen name="AddActivities" component={AddActivities} />
+            <Tab.Screen name="AddNewActivity" component={AddNewActivity} />
           
       </Tab.Navigator>
     </NavigationContainer>

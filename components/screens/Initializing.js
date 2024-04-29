@@ -4,7 +4,7 @@ import { Text, View, FlatList, TouchableOpacity, Button} from "react-native";
 import {initializeDatabaseSymptoms, insertDataSymptoms, fetchDataSymptoms} from "../database/SymptomsDatabase";
 import {initializeDatabaseActivities, insertDataActivities} from "../database/ActivitiesDatabase";
 import { initializeCrashDatabase } from '../database/CrashDatabase';
-import styles from '../styles/style';
+import styles from '../styles/Style';
 
 export default function Initializing({ navigation }) {
     const [symptomsIntensity, setSymptomsIntensity] = useState({});
