@@ -115,11 +115,11 @@ const navigateToQuestion = () => {
       </TouchableWithoutFeedback>
       
       <TouchableOpacity style={styles.buttonMenu} onPress={navigateToQuestion}>
-        <Text style={styles.buttonText}>Questionnaire</Text>
+        <Text style={styles.buttonText}>Questionnaire journalier</Text>
       </TouchableOpacity>
 
       <TouchableOpacity style={styles.buttonMenu} onPress={() => navigation.navigate('Activities')}>
-        <Text style={styles.buttonText}>Activités</Text>
+        <Text style={styles.buttonText}>Activités journalières</Text>
       </TouchableOpacity>
       
       

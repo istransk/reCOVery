@@ -30,6 +30,7 @@ export default function Activities({navigation}) {
     return (
         <View style={styles.container}>
           <View style={styles.contentContainer}>
+            <View style={styles.contentList}>
             <FlatList
               data={dailyActivitiesList}
               renderItem={({item}) => (
@@ -42,6 +43,7 @@ export default function Activities({navigation}) {
               )}
               keyExtractor={(item) => item.id}
             />
+            </View>
             <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('AddActivities')}>
                 <Text style={styles.buttonText}>Ajouter une activité</Text>
             </TouchableOpacity>

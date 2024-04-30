@@ -49,12 +49,12 @@ export default function Questionnaire({navigation}) {
     setSortedSymptoms(filteredSymptoms.sort((a, b) => b.intensity - a.intensity));
   } , [symptoms]);
 
+  //to dimiss keyboard when clicking outside of text input
   const handleBackgroundPress = () => {
     if (textInputFocus) {
       Keyboard.dismiss();
       setTextInputFocus(false);
     }
-    console.log('Background pressed');
   };
 
   const goToNextSymptom = () => {

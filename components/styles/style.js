@@ -20,6 +20,14 @@ const styles = StyleSheet.create({
     width: '100%',
     backgroundColor: '#dcc1a7',
   },
+  contentList: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '100%',
+    flex: 1,
+    marginBottom: 100,
+    backgroundColor: '#dcc1a7',
+  },
   iphoneBottom: {
     position: 'absolute',
     bottom: 0,
@@ -63,6 +71,8 @@ const styles = StyleSheet.create({
     height: 50,
   },
   button: {
+    marginTop: 10,
+    marginBottom: 60,
     margin: 10,
     backgroundColor: '#72665A', 
     borderRadius: 4,
@@ -162,7 +172,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row', // Arrange buttons horizontally
     justifyContent: 'center', // Center buttons horizontally
     marginTop: 20, // Add margin at the top for spacing
-  },
+  }
 });
   
 export default styles;
