@@ -3,6 +3,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import { useEffect, useState, useCallback } from "react"; 
 import {insertDataActivities, fetchDataActivities} from "../../database/ActivitiesDatabase";
 import {insertDataDailyActivities} from "../../database/DailyActivitiesDatabase";
+import styles from "../../styles/Style";
 
 function getDate() {
     const today = new Date();
@@ -50,7 +51,7 @@ export default function AddActivities({navigation}) {
     
 
     return (
-        <View style={{marginTop:50}}>
+        <View style={styles.container}>
             
             <TextInput
                 value={duration}

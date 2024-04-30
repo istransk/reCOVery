@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Button, FlatList, TouchableOpacity, TextInput } from 'react-native';
+import { StyleSheet, Text, View, Button, FlatList, TouchableOpacity, TextInput, Platform, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import { useEffect, useState} from 'react';
 import { fetchDataSymptoms } from '../database/SymptomsDatabase';
 import styles from '../styles/Style';
@@ -29,6 +29,7 @@ export default function Questionnaire({navigation}) {
   const [hasAnswered, setHasAnswered] = useState(false);
   const [data, setData] = useState([]);
   const date = getDate();
+  const [textInputFocus, setTextInputFocus] = useState(false);
 
 
   useEffect(() => {
@@ -47,6 +48,14 @@ export default function Questionnaire({navigation}) {
     // Sort symptoms by intensity in descending order
     setSortedSymptoms(filteredSymptoms.sort((a, b) => b.intensity - a.intensity));
   } , [symptoms]);
+
+  const handleBackgroundPress = () => {
+    if (textInputFocus) {
+      Keyboard.dismiss();
+      setTextInputFocus(false);
+    }
+    console.log('Background pressed');
+  };
 
   const goToNextSymptom = () => {
     if (currentSymptomIndex < sortedSymptoms.length - 1) {
@@ -81,25 +90,28 @@ export default function Questionnaire({navigation}) {
       const gradeButtons = [0, 1, 2, 3].map(intensity => (
         <TouchableOpacity
             key={intensity}
-            style={{ padding: 10, backgroundColor: symptomsIntensity[item.symptom] === intensity ? 'blue' : 'grey', borderRadius: 5, margin: 10 }}
+            style={{ padding: 20, backgroundColor: symptomsIntensity[item.symptom] === intensity ? '#171412' : '#72665A', borderRadius: 5, margin: 10 }}
             onPress={() => handleIntensityChange(item.symptom, intensity)}
         >
-            <Text style={{ color: 'white' }}>{intensity}</Text>
+            <Text style={styles.buttonText}>{intensity}</Text>
         </TouchableOpacity>
     ));
 
     return (
-      <View>
-        <Text>{item.symptom}</Text>
-        <View style={{ flexDirection: 'row', marginTop: 5 }}>
+      <View >
+        <Text style={styles.symptomText}>{item.symptom}</Text>
+        <View style={styles.gradeButtonContainer}>
           {gradeButtons}
         </View>
         <TextInput
                     value={symptomComments[item.symptom] || ''}
                     onChangeText={comment => handleCommentChange(item.symptom, comment)}
-                    placeholder="Enter comment"
-                    style={{ borderWidth: 1, borderColor: 'grey', borderRadius: 5, padding: 5, marginTop: 5 }}
+                    placeholder="Commentaire"
+                    style={styles.commentInput}
                     multiline={true}
+                    selectionColor={'#72665A'}
+                    onFocus={() => setTextInputFocus(true)}
+                    onBlur={() => setTextInputFocus(false)}
         />
       </View>
     );
@@ -116,58 +128,44 @@ export default function Questionnaire({navigation}) {
 
   return (
     <View style={styles.container}>
-      
-      {console.log(currentSymptomIndex)}
-      {renderQuestion(sortedSymptoms[currentSymptomIndex])}
-          
-          
-          <TouchableOpacity 
-            onPress={goToPreviousSymptom}
-            disabled={currentSymptomIndex === 0}
-            style={[
-              {
-                  padding: 10,
-                  borderRadius: 5,
-                  margin: 10,
-                  backgroundColor: currentSymptomIndex=== 0 ? 'lightgrey' : 'grey' ,
-              },
-          ]}
-          >
-            <Text style={{color: 'white' }}>Précédent</Text>
+       <TouchableWithoutFeedback onPress={handleBackgroundPress}>
+        <View 
+          style={styles.contentContainer}
+          onPress={handleBackgroundPress}
+        >
+          {renderQuestion(sortedSymptoms[currentSymptomIndex])}
+              
+          <View style={styles.buttonRow}>    
+              <TouchableOpacity 
+                onPress={goToPreviousSymptom}
+                disabled={currentSymptomIndex === 0}
+                style={styles.button}
+              >
+                <Text style={styles.buttonText}>Précédent</Text>
+              </TouchableOpacity>
+              <TouchableOpacity 
+                onPress={goToNextSymptom}
+                disabled={Object.keys(symptomsIntensity).length === currentSymptomIndex || (currentSymptomIndex === sortedSymptoms.length - 1)}
+                style={styles.button}
+              >
+                <Text style={styles.buttonText}>Suivant</Text>
+              </TouchableOpacity>
+              
+          </View>
+          <TouchableOpacity style={styles.button} onPress={saveAnswersToDatabase}>
+                <Text style={styles.buttonText}>Terminer</Text>
+              </TouchableOpacity>
+              {currentSymptomIndex === sortedSymptoms.length - 1 && (
+              <TouchableOpacity style={styles.button} onPress={saveAnswersToDatabase}>
+                <Text style={styles.buttonText}>Terminer</Text>
+              </TouchableOpacity>
+          )}      
+          <TouchableOpacity style={styles.bottomButton} onPress={() => navigation.navigate('Home')}>
+            <Text style={styles.bottomButtonText}>HOME</Text>
           </TouchableOpacity>
-          {console.log(symptomsIntensity)}
-          <TouchableOpacity 
-            onPress={goToNextSymptom}
-            disabled={Object.keys(symptomsIntensity).length === currentSymptomIndex || (currentSymptomIndex === sortedSymptoms.length - 1)}
-            style={[
-              {
-                  padding: 10,
-                  borderRadius: 5,
-                  margin: 10,
-                  backgroundColor: Object.keys(symptomsIntensity).length === currentSymptomIndex || currentSymptomIndex === sortedSymptoms.length - 1  ? 'lightgrey' : 'grey' ,
-              },
-          ]}
-          >
-            <Text style={{ color: 'white' }}>Suivant</Text>
-          </TouchableOpacity>
-          <Button title="Save" onPress={saveAnswersToDatabase} />
-          <Button title="Data" onPress={() => console.log(data)} />
-
-      <FlatList
-        data={sortedSymptoms}
-        renderItem={({ item }) => (
-          <Text>{item.symptom}: {item.intensity}</Text>
-        )}
-        keyExtractor={(item) => item.symptom}
-      />
-
-      
-      
-   
-    
-      <TouchableOpacity style={styles.bottomButton} onPress={() => navigation.navigate('Home')}>
-        <Text style={styles.bottomButtonText}>HOME</Text>
-      </TouchableOpacity>
+        </View>
+      </TouchableWithoutFeedback>
+      {Platform.OS === 'ios' ? <View style={styles.iphoneBottom}></View> : null}
     </View>
   );
 }

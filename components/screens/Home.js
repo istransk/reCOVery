@@ -1,8 +1,8 @@
-import { StyleSheet, Text, View, Button, Animated, TouchableWithoutFeedback, TouchableOpacity, FlatList } from 'react-native';
+import { StyleSheet, Text, View, Button, Animated, TouchableWithoutFeedback, TouchableOpacity, FlatList, Platform } from 'react-native';
 import {useEffect, useState, useContext} from 'react';
 import {fetchDataIsCrash, insertCrashData, updateCrashData, fetchDataCrash, isCrash} from '../database/CrashDatabase';
 import { insertDataDailySymptoms } from '../database/DailySymptomsDatabase';
-import styles from '../styles/style';
+import styles from '../styles/Style';
 
 function getDate() {
   const today = new Date();
@@ -106,21 +106,20 @@ const navigateToQuestion = () => {
 
   return (
     <View style={styles.container}>
+      <View style={styles.contentContainer}>
       <TouchableWithoutFeedback onPressIn={handlePressIn} onPressOut={handlePressOut}>
         <View style={[styles.crashButton, hasCrashed ? styles.hasCrashed : null]} onLayout={getButtonWidthLayout}>
           <Animated.View style={[styles.bgFill, getProgressStyles()]} />
-          <Text style={styles.buttonText}>CRASH</Text>
+          <Text style={styles.crashButtonText}>CRASH</Text>
         </View>
       </TouchableWithoutFeedback>
-      {hasCrashed && <Text>Crash</Text>}
-      <Button title="Data" onPress={fetchDataCrash} />
       
-      <TouchableOpacity onPress={navigateToQuestion}>
-        <Text>Questionnaire</Text>
+      <TouchableOpacity style={styles.buttonMenu} onPress={navigateToQuestion}>
+        <Text style={styles.buttonText}>Questionnaire</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity onPress={() => navigation.navigate('Activities')}>
-        <Text>Activités</Text>
+      <TouchableOpacity style={styles.buttonMenu} onPress={() => navigation.navigate('Activities')}>
+        <Text style={styles.buttonText}>Activités</Text>
       </TouchableOpacity>
       
       
@@ -128,6 +127,8 @@ const navigateToQuestion = () => {
       <TouchableOpacity style={styles.bottomButton} onPress={() => navigation.navigate('Results')}>
         <Text style={styles.bottomButtonText}>RÉSULTATS</Text>
       </TouchableOpacity>
+      </View>
+      {Platform.OS === 'ios' ? <View style={styles.iphoneBottom}></View> : null}
     </View>
   );
 }

@@ -1,11 +1,11 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, Button, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, Button, TouchableOpacity, Platform } from 'react-native';
 import { useEffect, useState } from 'react';
 import { fetchDataSymptoms } from '../database/SymptomsDatabase';
 import { fetchAllDataDailyActivities } from '../database/DailyActivitiesDatabase';
 import { BarChart } from 'react-native-gifted-charts';
 import { categories } from '../database/Symptoms';
-import styles from '../styles/style';
+import styles from '../styles/Style';
 
 export default function Results({navigation}) {
   const [listDailyActivities, setListDailyActivities] = useState([]);
@@ -216,11 +216,14 @@ export default function Results({navigation}) {
 
   return (
     <View style={styles.container}>
-      {console.log(dataChartDailyActivities(categories[0], dataDailyActivitiesTreatment(activities), 2024, '04'))}
-     {dataChartMonthlyActivities(dataDailyActivitiesTreatment(activities), 2024)}
-      <TouchableOpacity style={styles.resultsButton} onPress={() => navigation.navigate('Home')}>
-        <Text style={styles.menuText}>HOME</Text>
-      </TouchableOpacity>
+      <View style={styles.contentContainer}>
+        {console.log(dataChartDailyActivities(categories[0], dataDailyActivitiesTreatment(activities), 2024, '04'))}
+        {dataChartMonthlyActivities(dataDailyActivitiesTreatment(activities), 2024)}
+        <TouchableOpacity style={styles.bottomButton} onPress={() => navigation.navigate('Home')}>
+          <Text style={styles.bottomButtonText}>ACCUEIL</Text>
+        </TouchableOpacity>
+      </View>
+      {Platform.OS === 'ios' ? <View style={styles.iphoneBottom}></View> : null}
     </View>
   );
 }

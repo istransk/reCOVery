@@ -2,6 +2,12 @@ import { Platform,StyleSheet } from 'react-native';
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
+    backgroundColor: '#dcc1a7',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  contentContainer: {
     ...Platform.select({
       ios: {
         marginBottom: 20,
@@ -9,9 +15,18 @@ const styles = StyleSheet.create({
     }),
     marginTop: 50,
     flex: 1,
-    backgroundColor: '#dcc1a7',
     alignItems: 'center',
     justifyContent: 'center',
+    width: '100%',
+    backgroundColor: '#dcc1a7',
+  },
+  iphoneBottom: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: 20, 
+    backgroundColor: '#72665A',
   },
   buttonContainer: {
     position: 'absolute',
@@ -23,7 +38,7 @@ const styles = StyleSheet.create({
   },
   crashButton: {
     position: 'absolute',
-    top: 100,
+    top: 40,
     backgroundColor: '#F7E9E3', 
     borderColor: '#72665A', 
     borderWidth: 1, 
@@ -36,7 +51,7 @@ const styles = StyleSheet.create({
     width: '80%', 
     alignItems: 'center',
     justifyContent: 'center',
-    height: 50,
+    height: 80,
   },
   bottomButton: {
     position: 'absolute',
@@ -48,9 +63,8 @@ const styles = StyleSheet.create({
     height: 50,
   },
   button: {
-    marginTop: 30,
     margin: 10,
-    backgroundColor: '#72665A', // Grey background color
+    backgroundColor: '#72665A', 
     borderRadius: 4,
     paddingVertical: 12,
     paddingHorizontal: 16,
@@ -62,12 +76,64 @@ const styles = StyleSheet.create({
     shadowRadius: 4, 
     elevation: 3, // Android elevation for shadow
   },
+  buttonMenu: {
+    width: '70%',
+    height: 50,
+    backgroundColor: '#72665A',
+    borderRadius: 50,
+    alignItems: 'center',
+    justifyContent: 'center',
+    margin: 20,
+    shadowColor: '#5c5249',
+    shadowOffset: { width: 2, height: 5 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3,
+    elevation: 4,
+  },
+  gradeButton: {
+    padding: 10,
+    backgroundColor: '#72665A',
+    borderRadius: 5,
+  },
+  gradeButtonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    marginBottom: 20,
+  },
+  symptomText: {
+    fontSize: 30,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginBottom: 10,
+  },
+  questionContainer: {
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  commentInput: {
+    borderWidth: 1,
+    borderColor: 'grey',
+    borderRadius: 5,
+    padding: 5,
+    backgroundColor: '#F7E9E3',
+    height: 150,
+    textAlignVertical: 'top',
+  },
+  buttonRow: {
+    flexDirection: 'row',
+    marginTop: 20,
+    justifyContent: 'space-between',
+  },
   hasCrashed: {
     backgroundColor: '#8B0000', // Change background color to red
   },
+  crashButtonText: {
+    fontSize: 40, 
+    color: '#000'
+  },
   buttonText: {
-    fontSize: 20, // Adjust font size
-    color: '#F7E9E3', // Change text color to black
+    fontSize: 20, 
+    color: '#F7E9E3',
   },
   bottomButtonText:{
     color: '#F7E9E3',
