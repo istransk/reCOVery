@@ -181,7 +181,7 @@ export default function Questionnaire({navigation}) {
           style={styles.contentContainer}
           onPress={handleBackgroundPress}
         >
-          <ProgressIndicator />
+           <ProgressIndicator />
           {renderQuestion(sortedSymptoms[currentSymptomIndex])}
           
           
@@ -193,7 +193,7 @@ export default function Questionnaire({navigation}) {
             </View>
           ) : <View style={styles.savedButtonContainer}></View> }     
           <TouchableOpacity style={styles.bottomButton} onPress={() => navigation.navigate('Home')}>
-            <Text style={styles.bottomButtonText}>HOME</Text>
+            <Text style={styles.bottomButtonText}>ACCUEIL</Text>
           </TouchableOpacity>
         </View>
       </TouchableWithoutFeedback>

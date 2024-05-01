@@ -21,12 +21,10 @@ const styles = StyleSheet.create({
     backgroundColor: '#dcc1a7',
   },
   contentList: {
-    alignItems: 'center',
+    alignItems: 'stretch',
     justifyContent: 'center',
-    width: '100%',
+    width: '90%',
     flex: 1,
-    marginBottom: 100,
-    backgroundColor: '#dcc1a7',
   },
   iphoneBottom: {
     position: 'absolute',
@@ -34,7 +32,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     height: 20, 
-    backgroundColor: '#72665A',
+    backgroundColor: 'black',
   },
   buttonContainer: {
     position: 'absolute',
@@ -204,11 +202,48 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingTop: 10,
+    paddingBottom: 10,
   },
   dot: {
     borderRadius: 50,
     marginHorizontal: 5,
+  },
+  activityContainer: {
+    padding: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#72665A',
+  },
+  activityText: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 5,
+  },
+  durationText: {
+    fontSize: 18,
+  },
+  commentText: {
+    marginTop: 5,
+    fontSize: 16,
+    marginRight: '7%',
+  },
+  commentContainer: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+  },
+  iconContainer: {
+    marginTop: 5,
+    alignSelf: 'flex-end',
+    marginLeft: 'auto',
+  },
+  addButton: {
+    marginTop: 10,
+    marginBottom: 70,
+    margin: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  addButtonContainer: {
+    alignItems: 'center',
   },
 });
   

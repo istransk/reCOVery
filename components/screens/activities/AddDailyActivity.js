@@ -29,10 +29,6 @@ export default function AddActivities({navigation}) {
     const [comment, setComment] = useState(null);
     const date = getDate();
 
-    useEffect(() => {
-        fetchDataActivities((result) => setActivitiesList(result));
-    }, []);
-
     useFocusEffect(
         useCallback(() => {
             fetchDataActivities((result) => setActivitiesList(result));
@@ -52,6 +48,7 @@ export default function AddActivities({navigation}) {
 
     return (
         <View style={styles.container}>
+            <View style={styles.contentContainer}>
             
             <TextInput
                 value={duration}
@@ -86,7 +83,7 @@ export default function AddActivities({navigation}) {
             <TouchableOpacity onPress={() => navigation.navigate('AddNewActivity')}>
                 <Text>Ajouter une nouvelle activité</Text>
             </TouchableOpacity>
-           
+            </View>
         </View>
     );
 }

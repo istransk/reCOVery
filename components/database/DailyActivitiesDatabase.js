@@ -65,4 +65,4 @@ const fetchAllDataDailyActivities = (rollback) => {
 
 
 
-export {initializeDailyActivitiesDatabase, insertDataDailyActivities, fetchDataDailyActivities, fetchAllDataDailyActivities}
+export {initializeDailyActivitiesDatabase, insertDataDailyActivities, fetchDataDailyActivities, fetchAllDataDailyActivities, clearDailyActivitiesDatabase }

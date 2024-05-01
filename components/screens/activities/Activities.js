@@ -1,6 +1,8 @@
-import { Text, View, StyleSheet, FlatList, TouchableOpacity, Platform} from 'react-native';
-import { useEffect, useState } from 'react';
+import { Text, View, FlatList, TouchableOpacity, Platform, SafeAreaView} from 'react-native';
+import { useState, useCallback, Fragment } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
 import {fetchDataDailyActivities} from '../../database/DailyActivitiesDatabase';
+import { Feather,  AntDesign } from '@expo/vector-icons';
 import styles from '../../styles/Style';
 
 function getDate() {
@@ -22,36 +24,72 @@ function getDate() {
 export default function Activities({navigation}) {
     const [dailyActivitiesList, setDailyActivitiesList] = useState([]);
     const date = getDate();
+    const [showFullComment, setShowFullComment] = useState({});
+    const [isTooLong, setIsTooLong] = useState(false);
 
-    useEffect(() => {
-      fetchDataDailyActivities(date, (result) => setDailyActivitiesList(result));
-    }, []);
+    const toggleComment = (activity) => {
+      setShowFullComment((prevState) => ({
+        ...prevState,
+        [activity]: !prevState[activity],
+      }));
+    };
+
+    useFocusEffect(
+      useCallback(() => {
+        fetchDataDailyActivities(date, (result) => setDailyActivitiesList(result));
+        console.log(dailyActivitiesList);
+      }, [])
+    );
+
+    const renderItem = ({ item }) => {
+      let truncatedComment = "";
+      if (item.comment !== null) {
+        truncatedComment = item.comment.slice(0, 20);
+        if (item.comment.length > 20) {
+          truncatedComment += '...';
+        }
+      }
+      
+      return (
+        <View style={styles.activityContainer}>
+          <Text style={styles.activityText}>{item.activity}</Text>
+          <Text style={styles.durationText}>Durée: {item.duration} minutes</Text>
+          <View style={styles.commentContainer}>
+            <Text style={styles.commentText}>
+              Commentaire: {showFullComment[item.activity] ? item.comment : truncatedComment }
+            </Text>
+            {(item.comment !== null) && (item.comment.length > 20) && (
+                <TouchableOpacity style={styles.iconContainer} onPress={() => toggleComment(item.activity)}>
+                  {showFullComment[item.activity] ? <Feather name="chevron-up" size={20} color="black" /> : <Feather name="chevron-down" size={20} color="black" />}
+                </TouchableOpacity>
+              )}
+          </View>
+        </View>
+      );
+    };
 
     return (
-        <View style={styles.container}>
+      <Fragment>
+        <SafeAreaView style={styles.container}>
           <View style={styles.contentContainer}>
-            <View style={styles.contentList}>
-            <FlatList
-              data={dailyActivitiesList}
-              renderItem={({item}) => (
-                <View>
-                  <Text>{item.activity}</Text>
-                    <Text>{item.category}</Text>
-                    <Text>{item.duration}</Text>
-                    <Text>{item.comment}</Text>
-                </View>
-              )}
-              keyExtractor={(item) => item.id}
-            />
+              <View style={styles.contentList}>
+              <FlatList
+                data={dailyActivitiesList}
+                renderItem={renderItem}
+                keyExtractor={(item) => item.id}
+              />
+              </View>
+              <View style={styles.addButtonContainer}>
+                <TouchableOpacity style={styles.addButton} onPress={() => navigation.navigate('AddActivities')}>
+                  <AntDesign name="pluscircleo" size={30} color="black" />
+                </TouchableOpacity>
+              </View>
+              <TouchableOpacity style={styles.bottomButton} onPress={() => navigation.navigate('Home')}>
+                <Text style={styles.bottomButtonText}>ACCUEIL</Text>
+              </TouchableOpacity>
             </View>
-            <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('AddActivities')}>
-                <Text style={styles.buttonText}>Ajouter une activité</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.bottomButton} onPress={() => navigation.navigate('Home')}>
-              <Text style={styles.bottomButtonText}>ACCUEIL</Text>
-            </TouchableOpacity>
-          </View>
-          {Platform.OS === 'ios' ? <View style={styles.iphoneBottom}></View> : null}
-        </View>
+          </SafeAreaView>
+          <SafeAreaView style={{ flex: 0, backgroundColor: 'black' }} />
+        </Fragment>
     );
 }
