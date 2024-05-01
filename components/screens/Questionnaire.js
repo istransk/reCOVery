@@ -32,6 +32,7 @@ export default function Questionnaire({navigation}) {
   const [data, setData] = useState([]);
   const date = getDate();
   const [textInputFocus, setTextInputFocus] = useState(false);
+  const [isDone, setIsDone] = useState(false);
 
 
   useEffect(() => {
@@ -62,7 +63,11 @@ export default function Questionnaire({navigation}) {
   const goToNextSymptom = () => {
     if (currentSymptomIndex < sortedSymptoms.length - 1) {
       setCurrentSymptomIndex(currentSymptomIndex + 1);
+      if (currentSymptomIndex === sortedSymptoms.length - 2) {
+        setIsDone(true);
+      }
     }
+    
   };
 
   const goToPreviousSymptom = () => {
@@ -141,6 +146,26 @@ export default function Questionnaire({navigation}) {
     }
   };
 
+  const ProgressIndicator = () => {
+    return (
+      <View style={styles.progressContainer}>
+        {sortedSymptoms.map((symptom, index) => {
+          const isAnswered = symptomsIntensity.hasOwnProperty(symptom.symptom);
+          const isActive = index === currentSymptomIndex;
+          const dotSize = isActive ? 13 : 6;
+          const dotColor = isAnswered ? '#171412' : 'rgba(128, 128, 128, 0.5)';
+  
+          return (
+            <View
+              key={index}
+              style={[styles.dot, { width: dotSize, height: dotSize, backgroundColor: dotColor }]}
+            />
+          );
+        })}
+      </View>
+    );
+  };
+
   const saveAnswersToDatabase = () => {
     Object.keys(symptomsIntensity).forEach(symptom => {
       insertDataDailySymptoms(symptom, symptomsIntensity[symptom], date, symptomComments[symptom]);
@@ -156,10 +181,11 @@ export default function Questionnaire({navigation}) {
           style={styles.contentContainer}
           onPress={handleBackgroundPress}
         >
+          <ProgressIndicator />
           {renderQuestion(sortedSymptoms[currentSymptomIndex])}
           
           
-          {currentSymptomIndex === sortedSymptoms.length - 1 ? (
+          {(isDone) && (Object.keys(symptomsIntensity).length > currentSymptomIndex) ? (
             <View style={styles.savedButtonContainer}>
               <TouchableOpacity style={styles.saveButton} onPress={saveAnswersToDatabase}>
                   <Text style={styles.buttonText}>Terminer</Text>

@@ -199,7 +199,17 @@ const styles = StyleSheet.create({
     flexDirection: 'row', // Arrange buttons horizontally
     justifyContent: 'center', // Center buttons horizontally
     marginTop: 20, // Add margin at the top for spacing
-  }
+  },
+  progressContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingTop: 10,
+  },
+  dot: {
+    borderRadius: 50,
+    marginHorizontal: 5,
+  },
 });
   
 export default styles;
