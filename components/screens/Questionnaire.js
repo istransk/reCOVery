@@ -3,6 +3,8 @@ import { useEffect, useState} from 'react';
 import { fetchDataSymptoms } from '../database/SymptomsDatabase';
 import styles from '../styles/Style';
 import { insertDataDailySymptoms, fetchDataDailySymptoms } from '../database/DailySymptomsDatabase';
+import { AntDesign } from '@expo/vector-icons';
+
 
 function getDate() {
   const today = new Date();
@@ -60,7 +62,6 @@ export default function Questionnaire({navigation}) {
   const goToNextSymptom = () => {
     if (currentSymptomIndex < sortedSymptoms.length - 1) {
       setCurrentSymptomIndex(currentSymptomIndex + 1);
-      console.log(Object.keys(symptomsIntensity).length === 0);
     }
   };
 
@@ -98,8 +99,30 @@ export default function Questionnaire({navigation}) {
     ));
 
     return (
-      <View >
-        <Text style={styles.symptomText}>{item.symptom}</Text>
+      <View style={{flex: 1, marginBottom: 200, justifyContent: 'space-around',}}>
+        <View style={styles.containerQuestions}>
+          <TouchableOpacity 
+            onPress={goToPreviousSymptom}
+            disabled={currentSymptomIndex === 0}
+          >
+            {currentSymptomIndex === 0 ? 
+              <AntDesign name="arrowleft" size={35} color={'#dcc1a7'} /> : 
+              <AntDesign name="arrowleft" size={35} color={"black"} />
+            }
+          </TouchableOpacity>
+          <View style={{width:'70%'}}>
+            <Text style={styles.symptomText}>{item.symptom}</Text>
+          </View>
+          <TouchableOpacity 
+            onPress={goToNextSymptom}
+            disabled={Object.keys(symptomsIntensity).length === currentSymptomIndex || (currentSymptomIndex === sortedSymptoms.length - 1)}
+          >
+            {currentSymptomIndex === sortedSymptoms.length -1 ? 
+            <AntDesign name="arrowright" size={35} color={'#dcc1a7'} /> :
+            <AntDesign name="arrowright" size={35} color={Object.keys(symptomsIntensity).length === currentSymptomIndex ? "rgba(128, 128, 128, 0.4)" :  "black"} />
+            }
+          </TouchableOpacity>
+        </View>
         <View style={styles.gradeButtonContainer}>
           {gradeButtons}
         </View>
@@ -134,32 +157,15 @@ export default function Questionnaire({navigation}) {
           onPress={handleBackgroundPress}
         >
           {renderQuestion(sortedSymptoms[currentSymptomIndex])}
-              
-          <View style={styles.buttonRow}>    
-              <TouchableOpacity 
-                onPress={goToPreviousSymptom}
-                disabled={currentSymptomIndex === 0}
-                style={styles.button}
-              >
-                <Text style={styles.buttonText}>Précédent</Text>
+          
+          
+          {currentSymptomIndex === sortedSymptoms.length - 1 ? (
+            <View style={styles.savedButtonContainer}>
+              <TouchableOpacity style={styles.saveButton} onPress={saveAnswersToDatabase}>
+                  <Text style={styles.buttonText}>Terminer</Text>
               </TouchableOpacity>
-              <TouchableOpacity 
-                onPress={goToNextSymptom}
-                disabled={Object.keys(symptomsIntensity).length === currentSymptomIndex || (currentSymptomIndex === sortedSymptoms.length - 1)}
-                style={styles.button}
-              >
-                <Text style={styles.buttonText}>Suivant</Text>
-              </TouchableOpacity>
-              
-          </View>
-          <TouchableOpacity style={styles.button} onPress={saveAnswersToDatabase}>
-                <Text style={styles.buttonText}>Terminer</Text>
-              </TouchableOpacity>
-              {currentSymptomIndex === sortedSymptoms.length - 1 && (
-              <TouchableOpacity style={styles.button} onPress={saveAnswersToDatabase}>
-                <Text style={styles.buttonText}>Terminer</Text>
-              </TouchableOpacity>
-          )}      
+            </View>
+          ) : <View style={styles.savedButtonContainer}></View> }     
           <TouchableOpacity style={styles.bottomButton} onPress={() => navigation.navigate('Home')}>
             <Text style={styles.bottomButtonText}>HOME</Text>
           </TouchableOpacity>

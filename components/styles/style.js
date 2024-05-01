@@ -44,6 +44,13 @@ const styles = StyleSheet.create({
     width: '100%',
     color: 'grey',
   },
+  containerQuestions: {
+    marginTop: 20,
+    marginBottom: 20,
+    flexDirection: 'row',
+    alignItems: 'center',
+    width: '100%',
+  },
   crashButton: {
     position: 'absolute',
     top: 40,
@@ -112,13 +119,33 @@ const styles = StyleSheet.create({
   },
   symptomText: {
     fontSize: 30,
-    fontWeight: 'bold',
     textAlign: 'center',
-    marginBottom: 10,
   },
   questionContainer: {
     alignItems: 'center',
-    marginBottom: 20,
+    marginTop: 20,
+    marginBottom: 50,
+    flex:1,
+  },
+  savedButtonContainer: {
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    fley: 1,
+  },
+  saveButton: {
+    position: 'absolute',
+    bottom: 90,
+    backgroundColor: '#72665A', 
+    borderRadius: 4,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#5c5249', 
+    shadowOffset: { width: 0, height: 2 }, 
+    shadowOpacity: 0.25, 
+    shadowRadius: 4, 
+    elevation: 3, // Android elevation for shadow
   },
   commentInput: {
     borderWidth: 1,
