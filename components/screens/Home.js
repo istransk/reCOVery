@@ -3,6 +3,7 @@ import {useEffect, useState, useContext} from 'react';
 import {fetchDataIsCrash, insertCrashData, updateCrashData, fetchDataCrash, isCrash} from '../database/CrashDatabase';
 import { insertDataDailySymptoms } from '../database/DailySymptomsDatabase';
 import styles from '../styles/Style';
+import CreatePdf from '../utils/CreatePdf';
 
 function getDate() {
   const today = new Date();
@@ -113,6 +114,7 @@ const navigateToQuestion = () => {
           <Text style={styles.crashButtonText}>CRASH</Text>
         </View>
       </TouchableWithoutFeedback>
+      <CreatePdf dateStart={'2024-04-25'} dateEnd={'2024-05-03'}/>
       
       <TouchableOpacity style={styles.buttonMenu} onPress={navigateToQuestion}>
         <Text style={styles.buttonText}>Questionnaire journalier</Text>
