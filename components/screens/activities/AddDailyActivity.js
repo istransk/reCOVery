@@ -23,8 +23,7 @@ function getDate() {
 
 export default function AddActivities({navigation}) {
     const [activitiesList, setActivitiesList] = useState([]); // [activities, setActivities
-    const [activity, setActivity] = useState('');
-    const [category, setCategory] = useState('');
+    const [activityId, setActivityId] = useState('');
     const [duration, setDuration] = useState(null);
     const [comment, setComment] = useState(null);
     const date = getDate();
@@ -33,15 +32,13 @@ export default function AddActivities({navigation}) {
         useCallback(() => {
             fetchDataActivities((result) => setActivitiesList(result));
         }, [])
+        
     );
 
     
 
-    const selectActivity = (activity, category) => {
-        setActivity(activity);
-        setCategory(category);
-        console.log(activity);
-        console.log();
+    const selectActivity = (id) => {
+        setActivityId(id);
     }
 
     
@@ -62,7 +59,7 @@ export default function AddActivities({navigation}) {
                 placeholder="Commentaire"
                 multiline={true}
             />
-            <TouchableOpacity onPress={() => {insertDataDailyActivities(activity, category, duration,date, comment);console.log(comment); navigation.navigate('Activities')}}>
+            <TouchableOpacity onPress={() => {insertDataDailyActivities(activityId,duration,date, comment); navigation.navigate('Activities')}}>
                 <Text>Valider</Text>
             </TouchableOpacity>
             <TouchableOpacity onPress={() => navigation.navigate('Activities')} style={{marginTop:50}}>
@@ -71,7 +68,7 @@ export default function AddActivities({navigation}) {
             <FlatList
                 data={activitiesList}
                 renderItem={({item}) => (
-                    <TouchableOpacity onPress={() => selectActivity(item.activity, item.category)}>
+                    <TouchableOpacity onPress={() => selectActivity(item.id)}>
                     <View style={{marginTop:10}}>
                         <Text>{item.activity}</Text>
                     </View>

@@ -51,7 +51,7 @@ const updateDataSymptoms = (symptom, intensity) => {
 const fetchDataSymptoms = (rollback) => {
     db.transaction(tx => {
         tx.executeSql(
-            'SELECT symptom, intensity FROM Symptoms;',
+            'SELECT id, symptom, intensity FROM Symptoms;',
             [],
             (_, { rows }) => {
                 rollback(rows._array);

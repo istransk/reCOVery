@@ -76,11 +76,11 @@ export default function Questionnaire({navigation}) {
     }
   };
 
-  const handleIntensityChange = (symptom, intensity) => {
+  const handleIntensityChange = (symptomId, intensity) => {
     setHasAnswered(true);
     setSymptomsIntensity(prevState => ({
         ...prevState,
-        [symptom]: intensity
+        [symptomId]: intensity
     }));
   };
 
@@ -96,8 +96,8 @@ export default function Questionnaire({navigation}) {
       const gradeButtons = [0, 1, 2, 3].map(intensity => (
         <TouchableOpacity
             key={intensity}
-            style={{ padding: 20, backgroundColor: symptomsIntensity[item.symptom] === intensity ? '#171412' : '#72665A', borderRadius: 5, margin: 10 }}
-            onPress={() => handleIntensityChange(item.symptom, intensity)}
+            style={{ padding: 20, backgroundColor: symptomsIntensity[item.id] === intensity ? '#171412' : '#72665A', borderRadius: 5, margin: 10 }}
+            onPress={() => handleIntensityChange(item.id, intensity)}
         >
             <Text style={styles.buttonText}>{intensity}</Text>
         </TouchableOpacity>
@@ -167,9 +167,10 @@ export default function Questionnaire({navigation}) {
   };
 
   const saveAnswersToDatabase = () => {
-    Object.keys(symptomsIntensity).forEach(symptom => {
-      insertDataDailySymptoms(symptom, symptomsIntensity[symptom], date, symptomComments[symptom]);
+    Object.keys(symptomsIntensity).forEach(symptomId => {
+      insertDataDailySymptoms(symptomId, symptomsIntensity[symptomId], date, symptomComments[symptomId]);
     });
+    navigation.navigate('Home');
   };
 
   

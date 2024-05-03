@@ -4,10 +4,18 @@ import db from './DefineDatabase';
 const initializeDailyActivitiesDatabase = () => {
     db.transaction(tx => {
         tx.executeSql(
-            'CREATE TABLE IF NOT EXISTS DailyActivities (id INTEGER PRIMARY KEY AUTOINCREMENT, activity STRING NOT NULL, category STRING NOT NULL, date STRING NOT NULL, duration INTEGER NOT NULL, comment STRING);'
-        );
-    }, null, console.log('Table DailyActivities initialized'));
-}
+            `CREATE TABLE IF NOT EXISTS DailyActivities (
+                id INTEGER PRIMARY KEY AUTOINCREMENT, 
+                activityid INTEGER NOT NULL, 
+                date DATE NOT NULL, 
+                duration INTEGER NOT NULL, 
+                comment STRING,
+                FOREIGN KEY (activityid) REFERENCES Activities(id)
+            );`,
+            [], null, (tx, error) => console.error('Error initializing DailySymptoms table:', error)
+            );
+        });
+    }
 
 const clearDailyActivitiesDatabase = () => {
     db.transaction(tx => {
@@ -17,11 +25,11 @@ const clearDailyActivitiesDatabase = () => {
     }, null, console.log('Table DailyActivities cleared'));
 }
 
-const insertDataDailyActivities = (activity, category, duration, date, comment) => {
+const insertDataDailyActivities = (activityid, duration, date, comment) => {
     db.transaction(tx => {
         tx.executeSql(
-            'INSERT INTO DailyActivities (activity, category, duration, date, comment) VALUES (?, ?, ?, ?, ?);',
-            [activity, category, duration, date, comment],
+            'INSERT INTO DailyActivities (activityid, duration, date, comment) VALUES (?, ?, ?, ?);',
+            [activityid, duration, date, comment],
             (_, { insertId }) => {
                 console.log(`Inserted activity with ID: ${insertId}`);
             },
@@ -35,7 +43,9 @@ const insertDataDailyActivities = (activity, category, duration, date, comment) 
 const fetchDataDailyActivities = (date, rollback) => {
     db.transaction(tx => {
         tx.executeSql(
-            'SELECT id, activity, category, duration, comment FROM DailyActivities WHERE date = ?;',
+            `SELECT d.id, a.activity, a.category, d.duration, d.comment 
+            FROM DailyActivities d INNER JOIN Activities a ON d.activityid = a.id
+            WHERE date = ?;`,
             [date],
             (_, { rows }) => {
                 rollback(rows._array);
@@ -51,7 +61,8 @@ const fetchDataDailyActivities = (date, rollback) => {
 const fetchAllDataDailyActivities = (rollback) => {
     db.transaction(tx => {
         tx.executeSql(
-            'SELECT id, activity, category, duration, comment FROM DailyActivities;',
+            `SELECT d.id, a.activity, a.category, d.duration, d.comment 
+            FROM DailyActivities d INNER JOIN Activities a ON d.activityid = a.id;`,
             [],
             (_, { rows }) => {
                 rollback(rows._array);
