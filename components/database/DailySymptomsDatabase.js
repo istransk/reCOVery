@@ -50,7 +50,7 @@ const fetchDataDailySymptomsDateRange = (dateStart, dateEnd, rollback) => {
         tx.executeSql(
             `SELECT d.id, s.symptom, d.intensity, d.comment, d.date FROM DailySymptoms d 
             INNER JOIN Symptoms s ON d.symptomid = s.id 
-            WHERE d.date BETWEEN ? AND ?;`,
+            WHERE (d.date > ?) AND (d.date <= ?);`,
             [dateStart, dateEnd],
             (_, { rows }) => {
                 rollback(rows._array);

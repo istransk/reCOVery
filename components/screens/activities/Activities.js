@@ -44,8 +44,8 @@ export default function Activities({navigation}) {
     const renderItem = ({ item }) => {
       let truncatedComment = "";
       if (item.comment !== null) {
-        truncatedComment = item.comment.slice(0, 30);
-        if (item.comment.length > 30) {
+        truncatedComment = item.comment.slice(0, 23);
+        if (item.comment.length > 23) {
           truncatedComment += '...';
         }
       }
@@ -58,7 +58,7 @@ export default function Activities({navigation}) {
             <Text style={styles.commentText}>
               Commentaire: {showFullComment[item.activity] ? item.comment : truncatedComment }
             </Text>
-            {(item.comment !== null) && (item.comment.length > 30) && (
+            {(item.comment !== null) && (item.comment.length > 23) && (
                 <TouchableOpacity style={styles.iconContainer} onPress={() => toggleComment(item.activity)}>
                   {showFullComment[item.activity] ? <Feather name="chevron-up" size={20} color="black" /> : <Feather name="chevron-down" size={20} color="black" />}
                 </TouchableOpacity>

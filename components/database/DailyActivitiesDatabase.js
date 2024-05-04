@@ -45,7 +45,7 @@ const fetchDataDailyActivities = (date, rollback) => {
         tx.executeSql(
             `SELECT d.id, a.activity, a.category, d.duration, d.comment 
             FROM DailyActivities d INNER JOIN Activities a ON d.activityid = a.id
-            WHERE date = ?;`,
+            WHERE d.date = ?;`,
             [date],
             (_, { rows }) => {
                 rollback(rows._array);
@@ -74,6 +74,23 @@ const fetchAllDataDailyActivities = (rollback) => {
     });
 }
 
+const fetchDataDailyActivitiesDateRange = (dateStart, dateEnd, rollback) => {
+    db.transaction(tx => {
+        tx.executeSql(
+            `SELECT d.id, a.activity, a.category, d.duration, d.date, d.comment 
+            FROM DailyActivities d INNER JOIN Activities a ON d.activityid = a.id
+            WHERE d.date > ? AND d.date <= ?;`,
+            [dateStart, dateEnd],
+            (_, { rows }) => {
+                rollback(rows._array);
+            },
+            (_, error) => {
+                console.log('Error fetching daily activities', error);
+            }
+        );
+    });
+}
 
 
-export {initializeDailyActivitiesDatabase, insertDataDailyActivities, fetchDataDailyActivities, fetchAllDataDailyActivities, clearDailyActivitiesDatabase }
+
+export {initializeDailyActivitiesDatabase, insertDataDailyActivities, fetchDataDailyActivities, fetchAllDataDailyActivities, clearDailyActivitiesDatabase, fetchDataDailyActivitiesDateRange }
