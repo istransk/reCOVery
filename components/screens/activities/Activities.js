@@ -69,8 +69,7 @@ export default function Activities({navigation}) {
     };
 
     return (
-      <Fragment>
-        <SafeAreaView style={styles.container}>
+      <View style={styles.container}>
           <View style={styles.contentContainer}>
               <View style={styles.contentList}>
               <FlatList
@@ -88,8 +87,7 @@ export default function Activities({navigation}) {
                 <Text style={styles.bottomButtonText}>ACCUEIL</Text>
               </TouchableOpacity>
             </View>
-          </SafeAreaView>
-          <SafeAreaView style={{ flex: 0, backgroundColor: 'black' }} />
-        </Fragment>
+      {Platform.OS === 'ios' ? <View style={styles.iphoneBottom}></View> : null}
+    </View>
     );
 }

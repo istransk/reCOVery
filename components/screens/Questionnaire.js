@@ -150,7 +150,7 @@ export default function Questionnaire({navigation}) {
     return (
       <View style={styles.progressContainer}>
         {sortedSymptoms.map((symptom, index) => {
-          const isAnswered = symptomsIntensity.hasOwnProperty(symptom.symptom);
+          const isAnswered = symptomsIntensity.hasOwnProperty(symptom.id);
           const isActive = index === currentSymptomIndex;
           const dotSize = isActive ? 13 : 6;
           const dotColor = isAnswered ? '#171412' : 'rgba(128, 128, 128, 0.5)';

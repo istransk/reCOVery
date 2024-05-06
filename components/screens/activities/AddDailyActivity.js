@@ -59,7 +59,7 @@ export default function AddActivities({navigation}) {
                 placeholder="Commentaire"
                 multiline={true}
             />
-            <TouchableOpacity onPress={() => {insertDataDailyActivities(activityId,duration,date, comment); navigation.navigate('Activities')}}>
+            <TouchableOpacity onPress={() => {insertDataDailyActivities(activityId,duration,date, comment); setDuration(""); setComment(""); setActivityId("");navigation.navigate('Activities')}}>
                 <Text>Valider</Text>
             </TouchableOpacity>
             <TouchableOpacity onPress={() => navigation.navigate('Activities')} style={{marginTop:50}}>
