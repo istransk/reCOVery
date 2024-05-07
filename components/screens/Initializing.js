@@ -4,6 +4,7 @@ import { Text, View, FlatList, TouchableOpacity, Button} from "react-native";
 import {initializeDatabaseSymptoms, insertDataSymptoms, fetchDataSymptoms} from "../database/SymptomsDatabase";
 import {initializeDatabaseActivities, insertDataActivities} from "../database/ActivitiesDatabase";
 import { initializeCrashDatabase } from '../database/CrashDatabase';
+import { checkIfValueExists, generateKey } from "../utils/encryption";
 import styles from '../styles/Style';
 
 export default function Initializing({ navigation }) {
@@ -11,11 +12,15 @@ export default function Initializing({ navigation }) {
     const [hasStarted, setHasStarted] = useState(false);
     const [isDone, setIsDone] = useState(false);
     const [currentSymptom, setCurrentSymptom] = useState(0);
+    const valueExists = checkIfValueExists('key');
 
     useEffect(() => {
         initializeDatabaseSymptoms();
         initializeDatabaseActivities();
         initializeCrashDatabase();
+        if (!valueExists){
+            generateKey();
+        }
     }, []);
     const handleIntensityChange = (symptom, intensity) => {
         setSymptomsIntensity(prevState => ({

@@ -1,9 +1,11 @@
 import { FlatList, View, TouchableOpacity, Text, TextInput} from "react-native";
 import { useFocusEffect } from '@react-navigation/native';
-import { useEffect, useState, useCallback } from "react"; 
+import { useEffect, useState, useCallback, useContext } from "react"; 
 import {insertDataActivities, fetchDataActivities} from "../../database/ActivitiesDatabase";
 import {insertDataDailyActivities} from "../../database/DailyActivitiesDatabase";
+import { encryption } from "../../utils/encryption";
 import styles from "../../styles/Style";
+import { KeyContext } from "../../contexts/KeyContext";
 
 function getDate() {
     const today = new Date();
@@ -22,6 +24,7 @@ function getDate() {
   }
 
 export default function AddActivities({navigation}) {
+    const key = useContext(KeyContext);
     const [activitiesList, setActivitiesList] = useState([]); // [activities, setActivities
     const [activityId, setActivityId] = useState('');
     const [duration, setDuration] = useState(null);
@@ -31,6 +34,7 @@ export default function AddActivities({navigation}) {
     useFocusEffect(
         useCallback(() => {
             fetchDataActivities((result) => setActivitiesList(result));
+            console.log("Key:",key);
         }, [])
         
     );
@@ -39,14 +43,12 @@ export default function AddActivities({navigation}) {
 
     const selectActivity = (id) => {
         setActivityId(id);
+        console.log(activityId);
     }
-
-    
 
     return (
         <View style={styles.container}>
             <View style={styles.contentContainer}>
-            
             <TextInput
                 value={duration}
                 onChangeText={setDuration}
@@ -59,7 +61,7 @@ export default function AddActivities({navigation}) {
                 placeholder="Commentaire"
                 multiline={true}
             />
-            <TouchableOpacity onPress={() => {insertDataDailyActivities(activityId,duration,date, comment); setDuration(""); setComment(""); setActivityId("");navigation.navigate('Activities')}}>
+            <TouchableOpacity onPress={() => {insertDataDailyActivities(activityId,encryption(duration, key),date, encryption(comment, key));setDuration("");setComment("");setActivityId("");navigation.navigate('Activities')}}>
                 <Text>Valider</Text>
             </TouchableOpacity>
             <TouchableOpacity onPress={() => navigation.navigate('Activities')} style={{marginTop:50}}>

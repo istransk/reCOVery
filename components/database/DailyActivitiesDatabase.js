@@ -8,7 +8,7 @@ const initializeDailyActivitiesDatabase = () => {
                 id INTEGER PRIMARY KEY AUTOINCREMENT, 
                 activityid INTEGER NOT NULL, 
                 date DATE NOT NULL, 
-                duration INTEGER NOT NULL, 
+                duration STRING NOT NULL, 
                 comment STRING,
                 FOREIGN KEY (activityid) REFERENCES Activities(id)
             );`,
@@ -49,7 +49,6 @@ const fetchDataDailyActivities = (date, rollback) => {
             [date],
             (_, { rows }) => {
                 rollback(rows._array);
-                console.log('Fetched activities', rows._array);
             },
                 (_, error) => {
                 console.log('Error fetching activities', error);

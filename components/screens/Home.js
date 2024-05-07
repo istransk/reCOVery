@@ -4,6 +4,10 @@ import {fetchDataIsCrash, insertCrashData, updateCrashData, fetchDataCrash, isCr
 import { insertDataDailySymptoms } from '../database/DailySymptomsDatabase';
 import styles from '../styles/Style';
 import CreatePdf from '../utils/CreatePdf';
+import { KeyContext } from '../contexts/KeyContext';
+import { getKeyValue } from '../utils/encryption';
+import { get } from 'react-native/Libraries/TurboModule/TurboModuleRegistry';
+import Loading from './Loading';
 
 function getDate() {
   const today = new Date();
@@ -24,12 +28,15 @@ function getDate() {
 }
 
 export default function Home({ navigation }) {
+  const [isLoading, setIsLoading] = useState(true); 
   const [pressAction] = useState(new Animated.Value(0)); // State variable for the animated value
   const ACTION_TIMER = 1000; // Duration of the action
   const [buttonWidth, setButtonWidth] = useState(0); // State variable for buttonWidth
   const [buttonHeight, setButtonHeight] = useState(0); // State variable for buttonHeight
   const [value, setValue] = useState(0); // State variable for _value
   const [hasCrashed, setHasCrashed] = useState(false);
+  const keyContext = useContext(KeyContext);
+  
   
   // Effect to fetch initial data
   useEffect(() => {
@@ -37,7 +44,14 @@ export default function Home({ navigation }) {
       setHasCrashed(result);
       console.log('This is a hasCrashed', result);
     });
-  }, []);
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 700); 
+  }, [KeyContext]);
+
+  if (isLoading) {
+    return <Loading />;
+  }
 
   // Function to handle layout event and update buttonWidth and buttonHeight
   const getButtonWidthLayout = (e) => {
@@ -114,6 +128,7 @@ const navigateToQuestion = () => {
           <Text style={styles.crashButtonText}>CRASH</Text>
         </View>
       </TouchableWithoutFeedback>
+      <Button title="Key" onPress={() => console.log(key)} />
       <CreatePdf dateStart={'2024-04-30'} dateEnd={'2024-05-04'}/>
       
       <TouchableOpacity style={styles.buttonMenu} onPress={navigateToQuestion}>

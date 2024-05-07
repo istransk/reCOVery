@@ -12,12 +12,16 @@ import Initializing from './components/screens/Initializing';
 import {fetchDataSymptoms} from './components/database/SymptomsDatabase';
 import {initializeDailyActivitiesDatabase, clearDailyActivitiesDatabase} from './components/database/DailyActivitiesDatabase';
 import { initializeDailySymptomsDatabase, clearDailySymptomsDatabase } from './components/database/DailySymptomsDatabase';
+import { KeyProvider } from './components/contexts/KeyContext';
+import { checkIfValueExists, generateKey, encryption, decryption, getKeyValue} from "./components/utils/encryption";
 
 const Tab = createBottomTabNavigator();
 
 export default function App() {
   const [symptoms, setSymptoms] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [encryptedData, setEncryptedData] = useState('');
+  const [decryptedData, setDecryptedData] = useState('');
 
   useEffect(() => {
     initializeDailyActivitiesDatabase();
@@ -38,17 +42,19 @@ export default function App() {
   }
 
   return (
-    <NavigationContainer>
-      <Tab.Navigator screenOptions={{headerShown: false,tabBarStyle: {display:"none"}}}>
-        {symptoms.length === 0 && (<Tab.Screen name="Initializing" component={Initializing} />)}
-            <Tab.Screen name="Home" component={Home} />
-            <Tab.Screen name="Questionnaire" component={Questionnaire} />
-            <Tab.Screen name="Results" component={Results} />
-            <Tab.Screen name="Activities" component={Activities} />
-            <Tab.Screen name="AddActivities" component={AddActivities} />
-            <Tab.Screen name="AddNewActivity" component={AddNewActivity} />
-          
-      </Tab.Navigator>
-    </NavigationContainer>
+    <KeyProvider>
+      <NavigationContainer>
+        <Tab.Navigator screenOptions={{headerShown: false,tabBarStyle: {display:"none"}}}>
+          {symptoms.length === 0 && (<Tab.Screen name="Initializing" component={Initializing} />)}
+              <Tab.Screen name="Home" component={Home} />
+              <Tab.Screen name="Questionnaire" component={Questionnaire} />
+              <Tab.Screen name="Results" component={Results} />
+              <Tab.Screen name="Activities" component={Activities} />
+              <Tab.Screen name="AddActivities" component={AddActivities} />
+              <Tab.Screen name="AddNewActivity" component={AddNewActivity} />
+            
+        </Tab.Navigator>
+      </NavigationContainer>
+    </KeyProvider>
   );
 }
