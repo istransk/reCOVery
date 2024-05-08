@@ -1,10 +1,11 @@
-import { View, Text } from "react-native";
+import { View, Text, ActivityIndicator } from "react-native";
+import styles from "../styles/Style";
 
 
 export default function Loading({Navigation}) {
     return (
-        <View>
-            <Text>Loading...</Text>
+        <View style={styles.container}>
+            <ActivityIndicator size="large" color="#72665A" />
         </View>
     );
 }

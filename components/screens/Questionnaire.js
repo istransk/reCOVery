@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Button, FlatList, TouchableOpacity, TextInput, Platform, TouchableWithoutFeedback, Keyboard } from 'react-native';
+import { StyleSheet, Text, View, Button, FlatList, TouchableOpacity, TextInput, Platform, TouchableWithoutFeedback, Keyboard, Modal, ScrollView } from 'react-native';
 import { useEffect, useState} from 'react';
 import { fetchDataSymptoms } from '../database/SymptomsDatabase';
 import styles from '../styles/Style';
@@ -7,19 +7,7 @@ import { AntDesign } from '@expo/vector-icons';
 
 
 function getDate() {
-  const today = new Date();
-  const month = today.getMonth() + 1;
-  const year = today.getFullYear();
-  const date = today.getDate();
-  if (month < 10 && date < 10) {
-    return `${year}-0${month}-0${date}`;
-  } else if (month < 10) {
-    return `${year}-0${month}-${date}`;
-  } else if (date < 10) {
-    return `${year}-${month}-0${date}`;
-  } else {
-    return `${year}-${month}-${date}`;
-  }
+  return new Date().toISOString().split('T')[0];
 }
 
 export default function Questionnaire({navigation}) {
@@ -33,6 +21,7 @@ export default function Questionnaire({navigation}) {
   const date = getDate();
   const [textInputFocus, setTextInputFocus] = useState(false);
   const [isDone, setIsDone] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
 
 
   useEffect(() => {
@@ -177,12 +166,46 @@ export default function Questionnaire({navigation}) {
 
   return (
     <View style={styles.container}>
+      <Modal 
+        visible={modalVisible}
+        transparent={true}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+              <ScrollView>
+                <Text style={styles.text}>
+                  Note tes symptômes de 0 à 3{"\n"}
+                  0 = pas de symptôme, {"\n"}
+                  1 = symptôme léger, n'a pas affecté ta journée{"\n"}
+                  2 = Symptôme modéré, a affecté ta journée dans une certaine mesure {"\n"}
+                  3 = Symptôme sévère, a perturbé ta journée {"\n"}
+                  {"\n"}
+                  {<AntDesign name="arrowleft" size={18} color={'black'} />}{<AntDesign name="arrowright" size={18} color={'black'} />}
+                  Te permet de passer d'une question à l'autre. {"\n"}
+                  Attention, tu ne peux passer à la question suivante qu'une fois que tu as indiqué noté la symptôme.{"\n"}
+                  {"\n"}
+                  Écris un commentaire si tu le souhaites.{"\n"}
+                  {"\n"}
+                  Lorsque tu as terminé le questionnaire, le bouton "Terminer" apparaît en bas. Appuie dessus pour le terminer{"\n"}
+                  {"\n"}
+                  Retourne à l'accueil en appuyant sur le bouton "ACCUEIL". {"\n"}
+                </Text>
+              </ScrollView>
+          <TouchableOpacity style={styles.button} onPress={() => setModalVisible(false)}>
+            <Text style={styles.buttonText}>Fermer</Text>
+          </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
        <TouchableWithoutFeedback onPress={handleBackgroundPress}>
         <View 
           style={styles.contentContainer}
           onPress={handleBackgroundPress}
         >
-           <ProgressIndicator />
+          <ProgressIndicator />
+          <TouchableOpacity style={styles.iconButtonContainer} onPress={() => setModalVisible(true)}>
+            <AntDesign name="questioncircleo" size={24} color="black" />
+          </TouchableOpacity>
           {renderQuestion(sortedSymptoms[currentSymptomIndex])}
           
           

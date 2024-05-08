@@ -1,4 +1,4 @@
-import { Text, View, FlatList, TouchableOpacity, Platform, SafeAreaView} from 'react-native';
+import { Text, View, FlatList, TouchableOpacity, Platform, SafeAreaView, Modal, ScrollView } from 'react-native';
 import { useState, useCallback, Fragment, useContext } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 import {fetchDataDailyActivities} from '../../database/DailyActivitiesDatabase';
@@ -8,20 +8,8 @@ import styles from '../../styles/Style';
 import { KeyContext } from '../../contexts/KeyContext';
 
 function getDate() {
-    const today = new Date();
-    const month = today.getMonth() + 1;
-    const year = today.getFullYear();
-    const date = today.getDate();
-    if (month < 10 && date < 10) {
-      return `${year}-0${month}-0${date}`;
-    } else if (month < 10) {
-      return `${year}-0${month}-${date}`;
-    } else if (date < 10) {
-      return `${year}-${month}-0${date}`;
-    } else {
-      return `${year}-${month}-${date}`;
-    }
-  }
+  return new Date().toISOString().split('T')[0];
+}
 
 export default function Activities({navigation}) {
     const key = useContext(KeyContext);
@@ -30,6 +18,7 @@ export default function Activities({navigation}) {
     const [showFullComment, setShowFullComment] = useState({});
     const [isTooLong, setIsTooLong] = useState(false);
     const [comment, setComment] = useState(null);
+    const [modalVisible, setModalVisible] = useState(false);
 
     const toggleComment = (activity) => {
       setShowFullComment((prevState) => ({
@@ -41,7 +30,6 @@ export default function Activities({navigation}) {
     useFocusEffect(
       useCallback(() => {
         fetchDataDailyActivities(date, (result) => setDailyActivitiesList(result));
-        console.log(dailyActivitiesList);
       }, [])
     );
 
@@ -78,7 +66,31 @@ export default function Activities({navigation}) {
 
     return (
       <View style={styles.container}>
+        <Modal 
+        visible={modalVisible}
+        transparent={true}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+                <Text style={styles.text}>
+                  Voici ta liste des activités de la journée. {"\n"}
+                  {"\n"}
+                  Appuie sur le bouton {<AntDesign name="pluscircleo" size={20} color="black" />} pour ajouter une nouvelle activité. {"\n"}
+                  {"\n"}
+                  {<Feather name="chevron-down" size={20} color="black" />} te permet de dérouler le commentaire si besoin. {"\n"}
+                  {"\n"}
+                  Retourne à l'accueil en appuyant sur le bouton "ACCUEIL". {"\n"}
+                </Text>
+          <TouchableOpacity style={styles.button} onPress={() => setModalVisible(false)}>
+            <Text style={styles.buttonText}>Fermer</Text>
+          </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
           <View style={styles.contentContainer}>
+            <TouchableOpacity style={styles.iconButtonContainer} onPress={() => setModalVisible(true)}>
+              <AntDesign name="questioncircleo" size={24} color="black" />
+            </TouchableOpacity>
               <View style={styles.contentList}>
               <FlatList
                 data={dailyActivitiesList}

@@ -6,12 +6,14 @@ import { fetchAllDataDailyActivities } from '../database/DailyActivitiesDatabase
 import { BarChart } from 'react-native-gifted-charts';
 import { categories } from '../database/Symptoms';
 import styles from '../styles/Style';
+import { AntDesign } from '@expo/vector-icons';
 
 export default function Results({navigation}) {
   const [listDailyActivities, setListDailyActivities] = useState([]);
   const [listSymptoms, setListSymptoms] = useState([]);
   const [dataActivities, setDataActivities] = useState([]);
   const [data, setData] = useState([]);
+  const [modalVisible, setModalVisible] = useState(false);
 
   useEffect(() => {
     fetchDataSymptoms(results => setListSymptoms(results));
@@ -217,6 +219,9 @@ export default function Results({navigation}) {
   return (
     <View style={styles.container}>
       <View style={styles.contentContainer}>
+      <TouchableOpacity style={styles.iconButtonContainer} onPress={() => setModalVisible(true)}>
+          <AntDesign name="questioncircleo" size={24} color="black" />
+        </TouchableOpacity>
         {console.log(dataChartDailyActivities(categories[0], dataDailyActivitiesTreatment(activities), 2024, '04'))}
         {dataChartMonthlyActivities(dataDailyActivitiesTreatment(activities), 2024)}
         <TouchableOpacity style={styles.bottomButton} onPress={() => navigation.navigate('Home')}>

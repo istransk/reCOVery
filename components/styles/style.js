@@ -19,6 +19,30 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     width: '100%',
     backgroundColor: '#dcc1a7',
+    flexDirection: 'column',
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  
+  modalContent: {
+    width: '90%',
+    maxHeight: '80%',
+    backgroundColor: '#dcc1a7', 
+    borderRadius: 10, 
+    padding: 20,
+    shadowColor: '#000', 
+    shadowOffset: {
+      width: 0,
+      height: 3,
+    },
+    justifyContent: 'space-between',
+    shadowOpacity: 0.27, // shadow opacity
+    shadowRadius: 4.65,
+    elevation: 6, // Android shadow
   },
   contentList: {
     alignItems: 'stretch',
@@ -33,14 +57,6 @@ const styles = StyleSheet.create({
     right: 0,
     height: 20, 
     backgroundColor: 'black',
-  },
-  buttonContainer: {
-    position: 'absolute',
-    bottom: 20,
-    left: 0,
-    right: 0,
-    width: '100%',
-    color: 'grey',
   },
   containerQuestions: {
     marginTop: 20,
@@ -77,7 +93,6 @@ const styles = StyleSheet.create({
   },
   button: {
     marginTop: 10,
-    marginBottom: 60,
     margin: 10,
     backgroundColor: '#72665A', 
     borderRadius: 4,
@@ -91,8 +106,14 @@ const styles = StyleSheet.create({
     shadowRadius: 4, 
     elevation: 3, // Android elevation for shadow
   },
+  buttonContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '100%',
+
+  },
   buttonMenu: {
-    width: '70%',
+    width: '80%',
     height: 50,
     backgroundColor: '#72665A',
     borderRadius: 50,
@@ -118,6 +139,10 @@ const styles = StyleSheet.create({
   symptomText: {
     fontSize: 30,
     textAlign: 'center',
+  },
+  welcomeText: {
+    fontSize: 20,
+    marginBottom: 20,
   },
   questionContainer: {
     alignItems: 'center',
@@ -183,7 +208,7 @@ const styles = StyleSheet.create({
   },
 
   rectangle: {
-    backgroundColor: '#D0AC8A',
+    backgroundColor: 'rgba(0, 0, 0, 0.1)',
     padding: 20,
     borderRadius: 10,
   },
@@ -194,9 +219,9 @@ const styles = StyleSheet.create({
     textAlign: 'left',
   },
   buttonGradeContainer: {
-    flexDirection: 'row', // Arrange buttons horizontally
-    justifyContent: 'center', // Center buttons horizontally
-    marginTop: 20, // Add margin at the top for spacing
+    flexDirection: 'row',
+    justifyContent: 'center', 
+    marginTop: 20, 
   },
   progressContainer: {
     flexDirection: 'row',
@@ -244,6 +269,12 @@ const styles = StyleSheet.create({
   },
   addButtonContainer: {
     alignItems: 'center',
+  },
+  iconButtonContainer: {
+    position: 'absolute',
+    top: 0,
+    right: 20,
+    zIndex: 1,
   },
 });
   

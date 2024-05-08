@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Button, Animated, TouchableWithoutFeedback, TouchableOpacity, FlatList, Platform } from 'react-native';
+import { StyleSheet, Text, View, Button, Animated, TouchableWithoutFeedback, TouchableOpacity, FlatList, Platform, Modal, ScrollView } from 'react-native';
 import {useEffect, useState, useContext} from 'react';
 import {fetchDataIsCrash, insertCrashData, updateCrashData, fetchDataCrash, isCrash} from '../database/CrashDatabase';
 import { insertDataDailySymptoms } from '../database/DailySymptomsDatabase';
@@ -6,25 +6,11 @@ import styles from '../styles/Style';
 import CreatePdf from '../utils/CreatePdf';
 import { KeyContext } from '../contexts/KeyContext';
 import { getKeyValue } from '../utils/encryption';
-import { get } from 'react-native/Libraries/TurboModule/TurboModuleRegistry';
+import AntDesign from '@expo/vector-icons/AntDesign';
 import Loading from './Loading';
 
 function getDate() {
-  const today = new Date();
-  const month = today.getMonth() + 1;
-  const year = today.getFullYear();
-  const date = today.getDate();
-  const hours = today.getHours();
-  const minutes = today.getMinutes();
-  if (month < 10 && date < 10) {
-    return `${year}-0${month}-0${date}-${hours}:${minutes}`;
-  } else if (month < 10) {
-    return `${year}-0${month}-${date}-${hours}:${minutes}`;
-  } else if (date < 10) {
-    return `${year}-${month}-0${date}-${hours}:${minutes}`;
-  } else {
-    return `${year}-${month}-${date}-${hours}:${minutes}`;
-  }
+  return new Date().toISOString().split('T')[0];
 }
 
 export default function Home({ navigation }) {
@@ -35,7 +21,9 @@ export default function Home({ navigation }) {
   const [buttonHeight, setButtonHeight] = useState(0); // State variable for buttonHeight
   const [value, setValue] = useState(0); // State variable for _value
   const [hasCrashed, setHasCrashed] = useState(false);
-  const keyContext = useContext(KeyContext);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalCrashVisible, setModalCrashVisible] = useState(false);
+  const key = useContext(KeyContext);
   
   
   // Effect to fetch initial data
@@ -47,11 +35,13 @@ export default function Home({ navigation }) {
     setTimeout(() => {
       setIsLoading(false);
     }, 700); 
-  }, [KeyContext]);
+  }, []);
 
   if (isLoading) {
     return <Loading />;
   }
+
+ 
 
   // Function to handle layout event and update buttonWidth and buttonHeight
   const getButtonWidthLayout = (e) => {
@@ -67,7 +57,7 @@ export default function Home({ navigation }) {
 
     const bgColor = pressAction.interpolate({
       inputRange: [0, 1],
-      outputRange: [hasCrashed ? 'white' : '#8B0000', hasCrashed ? 'white' : '#8B0000'],
+      outputRange: [hasCrashed ? '#F7E9E3' : '#8B0000', hasCrashed ? '#F7E9E3' : '#8B0000'],
     });
 
     return {
@@ -101,12 +91,12 @@ export default function Home({ navigation }) {
   if (value === 1) {
     const date = getDate();
     if (hasCrashed) {
-      alert("Vous n'êtes plus en crash");
+      setModalCrashVisible(true);
       updateCrashData(date, (success) => {
         setHasCrashed(success);
       });
     } else {
-      alert('CRASH!');
+      setModalCrashVisible(true);
       insertCrashData(date, (success) => {
         setHasCrashed(success);
       });
@@ -122,22 +112,76 @@ const navigateToQuestion = () => {
   return (
     <View style={styles.container}>
       <View style={styles.contentContainer}>
+        <TouchableOpacity style={styles.iconButtonContainer} onPress={() => setModalVisible(true)}>
+          <AntDesign name="questioncircleo" size={24} color="black" />
+        </TouchableOpacity>
+      <Modal 
+        visible={modalVisible}
+        transparent={true}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+              <ScrollView showsVerticalScrollIndicator={true}>
+                
+                <Text style={styles.text}>
+                  Bienvenue sur la page d'accueil ! {"\n"}
+                  {"\n"}
+                  Le bouton CRASH te permet de dire que tu es en crash. Tu l'actives en laissant ton doigt appuyé dessus jusqu'à ce que le bouton soit 
+                  complètement rouge. Le processus pour le désactiver est le même. {"\n"} 
+                  {"\n"}
+                  Tu peux facilement accéder au questionnaire journalier sur tes symptômes en cliquant sur le bouton "Questionnaire journalier". {"\n"}
+                  {"\n"}
+                  Tu peux également ajouter tes activités journalières au fur et à mesure de ta journée en cliquant sur le bouton "Activités journalières". {"\n"}
+                  {"\n"}
+                  Et finalement, tu peux consulter tes résultats en cliquant sur le bouton "RÉSULTATS" en bas de l'écran. {"\n"}
+                  {"\n"}
+                </Text>
+              </ScrollView>
+          <TouchableOpacity style={styles.button} onPress={() => setModalVisible(false)}>
+            <Text style={styles.buttonText}>Fermer</Text>
+          </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+      <Modal
+        visible={modalCrashVisible}
+        transparent={true}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+          {hasCrashed ?
+            <Text style={styles.text}>
+              Désolée d'apprendre que tu es en crash {"\n"}
+              {"\n"}
+              Repose toi bien et reviens dès que tu es plus en forme.
+            </Text>
+            : 
+            <Text style={styles.text}>
+              Heureuse de savoir que tu vas mieux {":)"} {"\n"}
+              {"\n"}
+            </Text>
+            }
+            <TouchableOpacity style={styles.button} onPress={() => setModalCrashVisible(false)}>
+              <Text style={styles.buttonText}>Fermer</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
       <TouchableWithoutFeedback onPressIn={handlePressIn} onPressOut={handlePressOut}>
         <View style={[styles.crashButton, hasCrashed ? styles.hasCrashed : null]} onLayout={getButtonWidthLayout}>
           <Animated.View style={[styles.bgFill, getProgressStyles()]} />
           <Text style={styles.crashButtonText}>CRASH</Text>
         </View>
       </TouchableWithoutFeedback>
-      <Button title="Key" onPress={() => console.log(key)} />
-      <CreatePdf dateStart={'2024-04-30'} dateEnd={'2024-05-04'}/>
-      
-      <TouchableOpacity style={styles.buttonMenu} onPress={navigateToQuestion}>
-        <Text style={styles.buttonText}>Questionnaire journalier</Text>
-      </TouchableOpacity>
 
-      <TouchableOpacity style={styles.buttonMenu} onPress={() => navigation.navigate('Activities')}>
-        <Text style={styles.buttonText}>Activités journalières</Text>
-      </TouchableOpacity>
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity style={styles.buttonMenu} onPress={navigateToQuestion}>
+          <Text style={styles.buttonText}>Questionnaire journalier</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.buttonMenu} onPress={() => navigation.navigate('Activities')}>
+          <Text style={styles.buttonText}>Activités journalières</Text>
+        </TouchableOpacity>
+      </View>
       
       
   

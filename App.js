@@ -13,15 +13,12 @@ import {fetchDataSymptoms} from './components/database/SymptomsDatabase';
 import {initializeDailyActivitiesDatabase, clearDailyActivitiesDatabase} from './components/database/DailyActivitiesDatabase';
 import { initializeDailySymptomsDatabase, clearDailySymptomsDatabase } from './components/database/DailySymptomsDatabase';
 import { KeyProvider } from './components/contexts/KeyContext';
-import { checkIfValueExists, generateKey, encryption, decryption, getKeyValue} from "./components/utils/encryption";
 
 const Tab = createBottomTabNavigator();
 
 export default function App() {
   const [symptoms, setSymptoms] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [encryptedData, setEncryptedData] = useState('');
-  const [decryptedData, setDecryptedData] = useState('');
 
   useEffect(() => {
     initializeDailyActivitiesDatabase();
