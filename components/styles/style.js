@@ -40,9 +40,9 @@ const styles = StyleSheet.create({
       height: 3,
     },
     justifyContent: 'space-between',
-    shadowOpacity: 0.27, // shadow opacity
+    shadowOpacity: 0.27, 
     shadowRadius: 4.65,
-    elevation: 6, // Android shadow
+    elevation: 6, 
   },
   contentList: {
     alignItems: 'stretch',
@@ -93,7 +93,6 @@ const styles = StyleSheet.create({
   },
   button: {
     marginTop: 10,
-    margin: 10,
     backgroundColor: '#72665A', 
     borderRadius: 4,
     paddingVertical: 12,
@@ -104,7 +103,16 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 }, 
     shadowOpacity: 0.25, 
     shadowRadius: 4, 
-    elevation: 3, // Android elevation for shadow
+    elevation: 3, 
+  },
+  buttonDisabled: {
+    marginTop: 10,
+    backgroundColor: 'rgba(114,	102,	90, 0.5)', 
+    borderRadius: 4,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   buttonContainer: {
     alignItems: 'center',
@@ -178,11 +186,35 @@ const styles = StyleSheet.create({
     backgroundColor: '#F7E9E3',
     height: 150,
     textAlignVertical: 'top',
+    fontSize: 16,
+  },
+  commentActivityInput: {
+    borderWidth: 1,
+    borderColor: 'grey',
+    borderRadius: 5,
+    padding: 5,
+    backgroundColor: '#F7E9E3',
+    height: 80,
+    textAlignVertical: 'top',
+    width: '80%',
+    fontSize: 16,
+  },
+  durationInput: {
+    borderColor: 'gray',
+    backgroundColor: '#F7E9E3',
+    borderWidth: 1,
+    borderRadius: 5,
+    height: 30,
+    textAlignVertical: 'center',
+    textAlign: 'center',
+    fontSize: 20,
   },
   buttonRow: {
     flexDirection: 'row',
     marginTop: 20,
     justifyContent: 'space-between',
+    marginBottom: 20,
+    width: '80%',
   },
   hasCrashed: {
     backgroundColor: '#8B0000', // Change background color to red
@@ -243,6 +275,12 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 5,
   },
+  activityTitleText: {
+    fontSize: 20,
+    marginBottom: 5,
+    marginTop: 10,
+    textAlign: 'left',
+  },
   durationText: {
     fontSize: 18,
   },
@@ -276,6 +314,10 @@ const styles = StyleSheet.create({
     right: 20,
     zIndex: 1,
   },
+  listText: {
+    fontSize: 20,
+  },
+  
 });
   
 export default styles;

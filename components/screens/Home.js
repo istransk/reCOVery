@@ -2,11 +2,11 @@ import { StyleSheet, Text, View, Button, Animated, TouchableWithoutFeedback, Tou
 import {useEffect, useState, useContext} from 'react';
 import {fetchDataIsCrash, insertCrashData, updateCrashData, fetchDataCrash, isCrash} from '../database/CrashDatabase';
 import { insertDataDailySymptoms } from '../database/DailySymptomsDatabase';
-import styles from '../styles/Style';
+import styles from '../styles/style';
 import CreatePdf from '../utils/CreatePdf';
 import { KeyContext } from '../contexts/KeyContext';
-import { getKeyValue } from '../utils/encryption';
-import AntDesign from '@expo/vector-icons/AntDesign';
+import { AntDesign } from '@expo/vector-icons';
+import { encryption, decryption } from '../utils/encryption';
 import Loading from './Loading';
 
 function getDate() {
@@ -28,9 +28,11 @@ export default function Home({ navigation }) {
   
   // Effect to fetch initial data
   useEffect(() => {
+    fetchDataCrash((result) => {
+      console.log(result);
+    });
     fetchDataIsCrash((result) => {
       setHasCrashed(result);
-      console.log('This is a hasCrashed', result);
     });
     setTimeout(() => {
       setIsLoading(false);
@@ -92,12 +94,12 @@ export default function Home({ navigation }) {
     const date = getDate();
     if (hasCrashed) {
       setModalCrashVisible(true);
-      updateCrashData(date, (success) => {
+      updateCrashData(encryption(date, key), (success) => {
         setHasCrashed(success);
       });
     } else {
       setModalCrashVisible(true);
-      insertCrashData(date, (success) => {
+      insertCrashData(encryption(date, key), (success) => {
         setHasCrashed(success);
       });
     }
@@ -137,9 +139,9 @@ const navigateToQuestion = () => {
                   {"\n"}
                 </Text>
               </ScrollView>
-          <TouchableOpacity style={styles.button} onPress={() => setModalVisible(false)}>
-            <Text style={styles.buttonText}>Fermer</Text>
-          </TouchableOpacity>
+            <TouchableOpacity style={styles.button} onPress={() => setModalVisible(false)}>
+              <Text style={styles.buttonText}>Fermer</Text>
+            </TouchableOpacity>
           </View>
         </View>
       </Modal>
@@ -182,9 +184,7 @@ const navigateToQuestion = () => {
           <Text style={styles.buttonText}>Activités journalières</Text>
         </TouchableOpacity>
       </View>
-      
-      
-  
+
       <TouchableOpacity style={styles.bottomButton} onPress={() => navigation.navigate('Results')}>
         <Text style={styles.bottomButtonText}>RÉSULTATS</Text>
       </TouchableOpacity>

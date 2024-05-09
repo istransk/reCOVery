@@ -6,8 +6,8 @@ const initializeDailySymptomsDatabase = () => {
         CREATE TABLE IF NOT EXISTS DailySymptoms (
             id INTEGER PRIMARY KEY AUTOINCREMENT, 
             symptomid INTEGER NOT NULL, 
-            intensity INTEGER NOT NULL, 
-            date DATE NOT NULL, 
+            intensity STRING NOT NULL, 
+            date STRING NOT NULL, 
             comment STRING DEFAULT NULL, 
             FOREIGN KEY (symptomid) REFERENCES Symptoms(id));`,
             [], null, (tx, error) => console.error('Error initializing DailySymptoms table:', error)

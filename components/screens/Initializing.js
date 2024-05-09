@@ -1,28 +1,41 @@
 import {symptoms, activities} from "../database/Symptoms";
-import { useState, useEffect  } from "react";
-import { Text, View, FlatList, TouchableOpacity, Button} from "react-native";
-import {initializeDatabaseSymptoms, insertDataSymptoms, fetchDataSymptoms} from "../database/SymptomsDatabase";
-import {initializeDatabaseActivities, insertDataActivities} from "../database/ActivitiesDatabase";
+import { useState, useEffect, useContext  } from "react";
+import { Text, View, FlatList, TouchableOpacity, Modal, ScrollView} from "react-native";
+import {initializeDatabaseSymptoms, insertDataSymptoms, fetchDataSymptoms, clearDatabaseSymptoms} from "../database/SymptomsDatabase";
+import {initializeDatabaseActivities, insertDataActivities, clearDatabaseActivities} from "../database/ActivitiesDatabase";
 import { initializeCrashDatabase } from '../database/CrashDatabase';
-import { checkIfValueExists, generateKey, encryption } from "../utils/encryption";
-import styles from '../styles/Style';
+import { encryption } from "../utils/encryption";
+import { KeyContext } from "../contexts/KeyContext";
+import { AntDesign } from '@expo/vector-icons';
+import Loading from './Loading';
+import styles from '../styles/style';
 
 export default function Initializing({ navigation }) {
     const [symptomsIntensity, setSymptomsIntensity] = useState({});
     const [hasStarted, setHasStarted] = useState(false);
     const [isDone, setIsDone] = useState(false);
+    const [symptomFinished, setSymptomFinished] = useState(false);
     const [currentSymptom, setCurrentSymptom] = useState(0);
     const [currentSymptomIndex, setCurrentSymptomIndex] = useState(0);
-    const valueExists = checkIfValueExists('key');
+    const [modalVisible, setModalVisible] = useState(false);
+    const [modalOverviewVisible, setModalOverviewVisible] = useState(false);
+    const key = useContext(KeyContext);
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         initializeDatabaseSymptoms();
         initializeDatabaseActivities();
         initializeCrashDatabase();
-        if (!valueExists){
-            generateKey();
-        }
+        
+        setTimeout(() => {
+            setIsLoading(false);
+          }, 700); 
+        
     }, []);
+
+    if (isLoading) {
+        return <Loading />;
+      }
 
     const handleIntensityChange = (symptom, intensity) => {
         setSymptomsIntensity(prevState => ({
@@ -32,22 +45,42 @@ export default function Initializing({ navigation }) {
     };
 
     const goToNextSymptom = () => {
-        if (currentSymptomIndex < sortedSymptoms.length - 1) {
-          setCurrentSymptomIndex(currentSymptomIndex + 1);
-          if (currentSymptomIndex === sortedSymptoms.length - 2) {
-            setIsDone(true);
-          }
+        if (currentSymptomIndex < symptoms.length - 1) {
+            setCurrentSymptomIndex(currentSymptomIndex + 1);
+            if (currentSymptomIndex === symptoms.length - 2) {
+                setSymptomFinished(true);
+            }
         }
         
       };
     
-      const goToPreviousSymptom = () => {
+    const goToPreviousSymptom = () => {
         if (currentSymptomIndex > 0) {
           setCurrentSymptomIndex(currentSymptomIndex - 1);
         }
-      };
+    };
 
-    const renderSymptomItem = ({ item }) => {
+    const ProgressIndicator = () => {
+        return (
+          <View style={styles.progressContainer}>
+            {symptoms.map((symptom, index) => {
+              const isAnswered = symptomsIntensity.hasOwnProperty(symptom);
+              const isActive = index === currentSymptomIndex;
+              const dotSize = isActive ? 13 : 6;
+              const dotColor = isAnswered ? '#171412' : 'rgba(128, 128, 128, 0.5)';
+      
+              return (
+                <View
+                  key={index}
+                  style={[styles.dot, { width: dotSize, height: dotSize, backgroundColor: dotColor }]}
+                />
+              );
+            })}
+          </View>
+        );
+    };
+
+    const renderSymptomItem = (item) => {
         const gradeButtons = [0, 1, 2, 3].map(intensity => (
             <TouchableOpacity
             key={intensity}
@@ -61,6 +94,7 @@ export default function Initializing({ navigation }) {
         return (
             <View style={{flex: 1, marginBottom: 200, justifyContent: 'space-around',}}>
                 <View style={styles.containerQuestions}>
+                
                 <TouchableOpacity 
                     onPress={goToPreviousSymptom}
                     disabled={currentSymptomIndex === 0}
@@ -73,11 +107,12 @@ export default function Initializing({ navigation }) {
                 <View style={{width:'70%'}}>
                     <Text style={styles.symptomText}>{item}</Text>
                 </View>
+                
                 <TouchableOpacity 
                     onPress={goToNextSymptom}
-                    disabled={Object.keys(symptomsIntensity).length === currentSymptomIndex || (currentSymptomIndex === sortedSymptoms.length - 1)}
+                    disabled={Object.keys(symptomsIntensity).length === currentSymptomIndex || (currentSymptomIndex === symptoms.length - 1)}
                 >
-                    {currentSymptomIndex === sortedSymptoms.length -1 ? 
+                    {currentSymptomIndex === symptoms.length -1 ? 
                     <AntDesign name="arrowright" size={35} color={'#dcc1a7'} /> :
                     <AntDesign name="arrowright" size={35} color={Object.keys(symptomsIntensity).length === currentSymptomIndex ? "rgba(128, 128, 128, 0.4)" :  "black"} />
                     }
@@ -95,13 +130,19 @@ export default function Initializing({ navigation }) {
 
     const renderSymptomWithIntensity = ({ item }) => {
         return (
-            <Text>{item.symptom}: {item.intensity }</Text>
+            <View style={styles.activityContainer}>
+            <Text style={styles.durationText}>{item.symptom}: {item.intensity }</Text>
+            </View>
         );
     };
 
     const saveAnswersToDatabase = () => {
         symptomGradesIntensity.forEach(({ symptom, intensity }) => {
-            insertDataSymptoms(encryption(symptom, key), encryption(intensity, key));
+            try {
+                insertDataSymptoms(encryption(symptom, key), encryption(intensity.toString(), key));
+            } catch (error) {
+                console.log(error);
+            }
         });
         navigation.navigate('Home');
     }
@@ -109,11 +150,14 @@ export default function Initializing({ navigation }) {
     const start = () => {
         try {
             activities.forEach(activity => {
-                insertDataActivities(activity.name, activity.category);
+                const cryptedActivity = encryption(activity.name, key);
+                const cryptedCategory = encryption(activity.category, key);
+                insertDataActivities(cryptedActivity, cryptedCategory);
             });
         } catch (error) {
             console.log(error);
         }
+        
         setHasStarted(true);
     }
 
@@ -141,11 +185,42 @@ export default function Initializing({ navigation }) {
             )}
             {hasStarted && !isDone && (
                 <View style={styles.contentContainer}>
-                    <renderSymptomItem item={symptoms[currentSymptomIndex]} />
+                    <TouchableOpacity style={styles.iconButtonContainer} onPress={() => setModalVisible(true)}>
+                        <AntDesign name="questioncircleo" size={24} color="black" />
+                    </TouchableOpacity>
+                    <Modal 
+                        visible={modalVisible}
+                        transparent={true}
+                    >
+                        <View style={styles.modalContainer}>
+                        <View style={styles.modalContent}>
+                            <ScrollView>
+                                <Text style={styles.text}>
+                                Note chaque symptôme de 0 à 3{"\n"}
+                                0 = Aucun symptôme, {"\n"}
+                                1 = Symptôme léger (n'affecte pas la vie quotidienne) {"\n"}
+                                2 = Symptôme modéré (affecte la vie quotidienne dans une certaine mesure) {"\n"}
+                                3 = Symptôme sévère (affecte tous les aspects de la vie quotidienne ; perturbe la vie) {"\n"}
+                                {"\n"}
+                                {<AntDesign name="arrowleft" size={18} color={'black'} />}{<AntDesign name="arrowright" size={18} color={'black'} />}
+                                Te permet de passer d'un symptôme à l'autre. {"\n"}
+                                Attention, tu ne peux passer au symptôme suivant qu'une fois que tu as noté le sympôme.{"\n"}
+                                {"\n"}
+                                Lorsque tu as noté tous les symptômes, le bouton "Terminer" apparaît en bas. Appuie dessus pour le terminer{"\n"}
+                                </Text>
+                            </ScrollView>
+                        <TouchableOpacity style={styles.button} onPress={() => setModalVisible(false)}>
+                            <Text style={styles.buttonText}>Fermer</Text>
+                        </TouchableOpacity>
+                        </View>
+                        </View>
+                    </Modal>
+                    <ProgressIndicator />
+                    {renderSymptomItem(symptoms[currentSymptomIndex])}
                 
-                    {(Object.keys(symptomsIntensity).length > currentSymptomIndex) ? (
+                    {symptomFinished && (Object.keys(symptomsIntensity).length > currentSymptomIndex) ? (
                             <View style={styles.savedButtonContainer}>
-                            <TouchableOpacity style={styles.saveButton} onPress={saveAnswersToDatabase}>
+                            <TouchableOpacity style={styles.saveButton} onPress={() => setIsDone(true)}>
                                 <Text style={styles.buttonText}>Terminer</Text>
                             </TouchableOpacity>
                             </View>
@@ -154,18 +229,23 @@ export default function Initializing({ navigation }) {
                 </View>
             )}
             {isDone && (
-                <View>
-                <FlatList
-                        data={symptomGradesIntensity}
-                        renderItem={renderSymptomWithIntensity}
-                        keyExtractor={(item, index) => index.toString()}
-                />
-                <TouchableOpacity onPress={saveAnswersToDatabase}>
-                    <Text>OK</Text>
+                <View style={styles.contentContainer}> 
+                    <Text style={styles.welcomeText}>Récapitulatif </Text>
+                    <View style={styles.contentList}>
+                        <FlatList
+                                data={symptomGradesIntensity}
+                                renderItem={renderSymptomWithIntensity}
+                                keyExtractor={(item, index) => index.toString()}
+                        />
+                    </View>
+                <View style={styles.buttonRow}>
+                <TouchableOpacity style={styles.button} onPress={() => {setIsDone(false)}}>
+                    <Text style={styles.buttonText}>Modifier</Text>
                 </TouchableOpacity>
-                <TouchableOpacity>
-                    <Text>Modifier</Text>
+                <TouchableOpacity style={styles.button} onPress={saveAnswersToDatabase}>
+                    <Text style={styles.buttonText}>OK</Text>
                 </TouchableOpacity>
+                </View>
                 </View>
             )}
         </View>

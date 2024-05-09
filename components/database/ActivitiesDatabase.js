@@ -19,7 +19,7 @@ const clearDatabaseActivities = () => {
 }
 
 const insertDataActivities = (activity, category) => {
-    console.log('Inserting activity');
+    console.log('Inserting activity:', activity, 'category:', category, 'into database.');
     db.transaction(tx => {
         tx.executeSql(
             'INSERT INTO Activities (activity, category) VALUES (?, ?);',
@@ -62,4 +62,4 @@ const fetchDataActivities = (callback) => {
     });
 }
 
-export {initializeDatabaseActivities, insertDataActivities, fetchDataActivities};
+export {initializeDatabaseActivities, insertDataActivities, fetchDataActivities, clearDatabaseActivities};

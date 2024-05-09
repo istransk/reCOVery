@@ -7,7 +7,7 @@ const initializeDailyActivitiesDatabase = () => {
             `CREATE TABLE IF NOT EXISTS DailyActivities (
                 id INTEGER PRIMARY KEY AUTOINCREMENT, 
                 activityid INTEGER NOT NULL, 
-                date DATE NOT NULL, 
+                date STRING NOT NULL, 
                 duration STRING NOT NULL, 
                 comment STRING,
                 FOREIGN KEY (activityid) REFERENCES Activities(id)
@@ -41,6 +41,7 @@ const insertDataDailyActivities = (activityid, duration, date, comment) => {
 }
 
 const fetchDataDailyActivities = (date, rollback) => {
+    console.log('Fetching activities for date:', date);
     db.transaction(tx => {
         tx.executeSql(
             `SELECT d.id, a.activity, a.category, d.duration, d.comment 
@@ -60,7 +61,7 @@ const fetchDataDailyActivities = (date, rollback) => {
 const fetchAllDataDailyActivities = (rollback) => {
     db.transaction(tx => {
         tx.executeSql(
-            `SELECT d.id, a.activity, a.category, d.duration, d.comment 
+            `SELECT d.id, d.date, a.activity, a.category, d.duration, d.comment 
             FROM DailyActivities d INNER JOIN Activities a ON d.activityid = a.id;`,
             [],
             (_, { rows }) => {

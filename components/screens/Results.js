@@ -5,7 +5,7 @@ import { fetchDataSymptoms } from '../database/SymptomsDatabase';
 import { fetchAllDataDailyActivities } from '../database/DailyActivitiesDatabase';
 import { BarChart } from 'react-native-gifted-charts';
 import { categories } from '../database/Symptoms';
-import styles from '../styles/Style';
+import styles from '../styles/style';
 import { AntDesign } from '@expo/vector-icons';
 
 export default function Results({navigation}) {

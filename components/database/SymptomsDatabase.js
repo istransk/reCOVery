@@ -4,7 +4,7 @@ import db from './DefineDatabase';
 const initializeDatabaseSymptoms = () => {
     db.transaction(tx => {
         tx.executeSql(
-            'CREATE TABLE IF NOT EXISTS Symptoms (id INTEGER PRIMARY KEY AUTOINCREMENT, symptom STRING NOT NULL UNIQUE, intensity INTEGER NOT NULL);'
+            'CREATE TABLE IF NOT EXISTS Symptoms (id INTEGER PRIMARY KEY AUTOINCREMENT, symptom STRING NOT NULL UNIQUE, intensity STRING NOT NULL);'
         );
     }, null, console.log('Table Symptoms initialized'));
 }
@@ -18,7 +18,6 @@ const clearDatabaseSymptoms = () => {
 }
 
 const insertDataSymptoms = (symptom, intensity) => {
-    console.log('Inserting symptom');
     db.transaction(tx => {
         tx.executeSql(
             'INSERT INTO Symptoms (symptom, intensity) VALUES (?, ?);',

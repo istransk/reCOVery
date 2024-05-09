@@ -3,7 +3,7 @@ import db from './DefineDatabase';
 const initializeCrashDatabase = () => {
     db.transaction(tx => {
         tx.executeSql(
-            'CREATE TABLE IF NOT EXISTS Crash (id INTEGER PRIMARY KEY AUTOINCREMENT, dateStart STRING NOT NULL, dateEnd STRING, isCrash BOOLEAN DEFAULT TRUE);'
+            'CREATE TABLE IF NOT EXISTS Crash (id INTEGER PRIMARY KEY AUTOINCREMENT, dateStart STRING NOT NULL, dateEnd STRING DEFAULT NULL, isCrash BOOLEAN DEFAULT TRUE);'
         );
     }, null, console.log('Table Crash initialized'));
 };
@@ -28,7 +28,7 @@ const insertCrashData = (dateStart, callback) => {
 const updateCrashData = (dateEnd, callback) => {
     db.transaction(tx => {
         tx.executeSql(
-            'UPDATE Crash SET dateEnd = ?, isCrash = FALSE WHERE isCrash = TRUE;',
+            'UPDATE Crash SET dateEnd = ? WHERE dateEnd IS NULL;',
             [dateEnd],
             (_, { rowsAffected }) => {
                 console.log(`Updated crash`);
@@ -45,7 +45,7 @@ const updateCrashData = (dateEnd, callback) => {
 const fetchDataIsCrash = (callback) => {
     db.transaction(tx => {
         tx.executeSql(
-            'SELECT * FROM Crash WHERE isCrash = TRUE;',
+            'SELECT * FROM Crash WHERE dateEnd IS NULL;',
             [],
             (_, { rows }) => {
                 if (rows.length > 0) {

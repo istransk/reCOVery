@@ -1,20 +1,22 @@
 import { Text, View, FlatList, TouchableOpacity, Platform, SafeAreaView, Modal, ScrollView } from 'react-native';
 import { useState, useCallback, Fragment, useContext } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
-import {fetchDataDailyActivities} from '../../database/DailyActivitiesDatabase';
+import {fetchDataDailyActivities, fetchAllDataDailyActivities} from '../../database/DailyActivitiesDatabase';
 import { Feather,  AntDesign } from '@expo/vector-icons';
-import { decryption } from '../../utils/encryption';
-import styles from '../../styles/Style';
+import { decryption, encryption } from '../../utils/encryption';
+import styles from '../../styles/style';
 import { KeyContext } from '../../contexts/KeyContext';
+import { get } from 'react-native/Libraries/TurboModule/TurboModuleRegistry';
 
 function getDate() {
   return new Date().toISOString().split('T')[0];
 }
 
 export default function Activities({navigation}) {
+    
     const key = useContext(KeyContext);
     const [dailyActivitiesList, setDailyActivitiesList] = useState([]);
-    const date = getDate();
+    const today = getDate();
     const [showFullComment, setShowFullComment] = useState({});
     const [isTooLong, setIsTooLong] = useState(false);
     const [comment, setComment] = useState(null);
@@ -29,7 +31,7 @@ export default function Activities({navigation}) {
 
     useFocusEffect(
       useCallback(() => {
-        fetchDataDailyActivities(date, (result) => setDailyActivitiesList(result));
+        fetchAllDataDailyActivities(result => setDailyActivitiesList(result));
       }, [])
     );
 
@@ -38,6 +40,8 @@ export default function Activities({navigation}) {
     const renderItem = ({ item }) => {
       const duration = decryption(item.duration,key);
       const comment = decryption(item.comment, key);
+      const activity = decryption(item.activity, key);
+      const date = decryption(item.date, key);
       let truncatedComment = "";
       if (comment !== null) {
         truncatedComment = comment.slice(0, 23);
@@ -46,9 +50,10 @@ export default function Activities({navigation}) {
         }
       }
       
+      if (date === today) {
       return (
         <View style={styles.activityContainer}>
-          <Text style={styles.activityText}>{item.activity}</Text>
+          <Text style={styles.activityText}>{activity}</Text>
           <Text style={styles.durationText}>Durée: {duration} minutes</Text>
           <View style={styles.commentContainer}>
             <Text style={styles.commentText}>
@@ -62,6 +67,7 @@ export default function Activities({navigation}) {
           </View>
         </View>
       );
+            }
     };
 
     return (
@@ -91,12 +97,14 @@ export default function Activities({navigation}) {
             <TouchableOpacity style={styles.iconButtonContainer} onPress={() => setModalVisible(true)}>
               <AntDesign name="questioncircleo" size={24} color="black" />
             </TouchableOpacity>
+            
               <View style={styles.contentList}>
-              <FlatList
-                data={dailyActivitiesList}
-                renderItem={renderItem}
-                keyExtractor={(item) => item.id}
-              />
+              
+                <FlatList
+                  data={dailyActivitiesList}
+                  renderItem={renderItem}
+                  keyExtractor={(item) => item.id}
+                />
               </View>
               <View style={styles.addButtonContainer}>
                 <TouchableOpacity style={styles.addButton} onPress={() => navigation.navigate('AddActivities')}>

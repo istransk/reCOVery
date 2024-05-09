@@ -1,5 +1,5 @@
 import { View, Text, ActivityIndicator } from "react-native";
-import styles from "../styles/Style";
+import styles from "../styles/style";
 
 
 export default function Loading({Navigation}) {

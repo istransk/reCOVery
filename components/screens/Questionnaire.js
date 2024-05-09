@@ -1,8 +1,10 @@
 import { StyleSheet, Text, View, Button, FlatList, TouchableOpacity, TextInput, Platform, TouchableWithoutFeedback, Keyboard, Modal, ScrollView } from 'react-native';
-import { useEffect, useState} from 'react';
+import { useEffect, useState, useContext} from 'react';
 import { fetchDataSymptoms } from '../database/SymptomsDatabase';
-import styles from '../styles/Style';
+import styles from '../styles/style';
 import { insertDataDailySymptoms, fetchDataDailySymptoms } from '../database/DailySymptomsDatabase';
+import { KeyContext } from '../contexts/KeyContext';
+import { encryption, decryption } from '../utils/encryption';
 import { AntDesign } from '@expo/vector-icons';
 
 
@@ -22,21 +24,24 @@ export default function Questionnaire({navigation}) {
   const [textInputFocus, setTextInputFocus] = useState(false);
   const [isDone, setIsDone] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
-
+  const [testDone, setTestDone] = useState(false);
+  const key = useContext(KeyContext);
 
   useEffect(() => {
-    fetchDataSymptoms(result => setSymptoms(result));
-    fetchDataDailySymptoms(result => setData(result));
+    fetchDataSymptoms(result => {
+      const decryptedSymptoms = result.map(symptom => ({
+        ...symptom,
+        symptom: decryption(symptom.symptom, key),
+        intensity: decryption(symptom.intensity, key),
+      }));
+      setSymptoms(decryptedSymptoms);
+    });
+    fetchDataDailySymptoms(result => hasDoneTestToday(result));
   }, []);
 
   useEffect(() => {
-    if (symptoms) {
-      console.log(symptoms);
-    } else {
-      console.log('No symptoms');
-    }
     // Filter out symptoms with intensity 0 exept for "Sommeil"
-    const filteredSymptoms = symptoms.filter(item => item.intensity !== 0 || item.symptom === "Sommeil");
+    const filteredSymptoms = symptoms.filter(item => Number(item.intensity) !== 0 || item.symptom === "Sommeil");
     // Sort symptoms by intensity in descending order
     setSortedSymptoms(filteredSymptoms.sort((a, b) => b.intensity - a.intensity));
   } , [symptoms]);
@@ -46,6 +51,12 @@ export default function Questionnaire({navigation}) {
     if (textInputFocus) {
       Keyboard.dismiss();
       setTextInputFocus(false);
+    }
+  };
+
+  const hasDoneTestToday = (data) => {
+    if (data.length > 0) {
+      setTestDone(data.some(item => decryption(item.date, key) === date));
     }
   };
 
@@ -66,7 +77,6 @@ export default function Questionnaire({navigation}) {
   };
 
   const handleIntensityChange = (symptomId, intensity) => {
-    setHasAnswered(true);
     setSymptomsIntensity(prevState => ({
         ...prevState,
         [symptomId]: intensity
@@ -157,7 +167,11 @@ export default function Questionnaire({navigation}) {
 
   const saveAnswersToDatabase = () => {
     Object.keys(symptomsIntensity).forEach(symptomId => {
-      insertDataDailySymptoms(symptomId, symptomsIntensity[symptomId], date, symptomComments[symptomId]);
+      const dateEncrypted = encryption(date, key);
+      const intensityEncrypted = encryption((symptomsIntensity[symptomId]).toString(), key);
+      const commentEncrypted = encryption(symptomComments[symptomId], key);
+
+      insertDataDailySymptoms(symptomId, encryption((symptomsIntensity[symptomId]).toString(), key), encryption(date, key), encryption(symptomComments[symptomId], key));
     });
     navigation.navigate('Home');
   };
@@ -200,22 +214,26 @@ export default function Questionnaire({navigation}) {
        <TouchableWithoutFeedback onPress={handleBackgroundPress}>
         <View 
           style={styles.contentContainer}
-          onPress={handleBackgroundPress}
         >
-          <ProgressIndicator />
-          <TouchableOpacity style={styles.iconButtonContainer} onPress={() => setModalVisible(true)}>
-            <AntDesign name="questioncircleo" size={24} color="black" />
-          </TouchableOpacity>
-          {renderQuestion(sortedSymptoms[currentSymptomIndex])}
-          
-          
-          {(isDone) && (Object.keys(symptomsIntensity).length > currentSymptomIndex) ? (
-            <View style={styles.savedButtonContainer}>
-              <TouchableOpacity style={styles.saveButton} onPress={saveAnswersToDatabase}>
-                  <Text style={styles.buttonText}>Terminer</Text>
-              </TouchableOpacity>
-            </View>
-          ) : <View style={styles.savedButtonContainer}></View> }     
+          {testDone ? (
+            <Text style={styles.activityTitleText}>Tu as déjà rempli le questionnaire aujourd'hui</Text>) : 
+              <>
+                <ProgressIndicator />
+                <TouchableOpacity style={styles.iconButtonContainer} onPress={() => setModalVisible(true)}>
+                  <AntDesign name="questioncircleo" size={24} color="black" />
+                </TouchableOpacity>
+                {renderQuestion(sortedSymptoms[currentSymptomIndex])}
+                
+                
+                {(isDone) && (Object.keys(symptomsIntensity).length > currentSymptomIndex) ? (
+                  <View style={styles.savedButtonContainer}>
+                    <TouchableOpacity style={styles.saveButton} onPress={saveAnswersToDatabase}>
+                        <Text style={styles.buttonText}>Terminer</Text>
+                    </TouchableOpacity>
+                  </View>
+                ) : <View style={styles.savedButtonContainer}></View> } 
+          </>   
+        } 
           <TouchableOpacity style={styles.bottomButton} onPress={() => navigation.navigate('Home')}>
             <Text style={styles.bottomButtonText}>ACCUEIL</Text>
           </TouchableOpacity>

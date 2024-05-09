@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import * as SecureStore from 'expo-secure-store';
-import { getKeyValue } from '../utils/encryption';
+import { getKeyValue, checkIfValueExists, generateKey } from '../utils/encryption';
 
 const KeyContext = createContext();
 
@@ -11,7 +11,16 @@ const useKey = () => {
 const KeyProvider = ({ children }) => {
   const [key, setKey] = useState(null);
   useEffect(() => {
-    getKeyValue().then(setKey);
+    checkIfValueExists('key').then((result) => {
+      if (!result) {
+          generateKey().then((key) => {
+              setKey(key);
+              console.log("key generated:", key);
+          });
+      } else {
+        getKeyValue().then(setKey);
+      }
+  });
   }, []);
 
   const getKeyValue = async () => {

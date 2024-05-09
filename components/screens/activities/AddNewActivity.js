@@ -1,7 +1,7 @@
 import { insertDataActivities } from "../../database/ActivitiesDatabase";
 import { categories } from "../../database/Symptoms";
 import { useState } from "react";
-import styles from '../../styles/Style';
+import styles from '../../styles/style';
 import { FlatList, TextInput, View, TouchableOpacity, Text } from "react-native";
 import { AntDesign } from '@expo/vector-icons';
 
