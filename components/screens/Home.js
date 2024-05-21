@@ -15,22 +15,20 @@ function getDate() {
 
 export default function Home({ navigation }) {
   const [isLoading, setIsLoading] = useState(true); 
-  const [pressAction] = useState(new Animated.Value(0)); // State variable for the animated value
-  const ACTION_TIMER = 1000; // Duration of the action
-  const [buttonWidth, setButtonWidth] = useState(0); // State variable for buttonWidth
-  const [buttonHeight, setButtonHeight] = useState(0); // State variable for buttonHeight
-  const [value, setValue] = useState(0); // State variable for _value
+  const [pressAction] = useState(new Animated.Value(0)); 
+  const ACTION_TIMER = 1000; 
+  const [buttonWidth, setButtonWidth] = useState(0); 
+  const [buttonHeight, setButtonHeight] = useState(0); 
+  const [value, setValue] = useState(0); 
   const [hasCrashed, setHasCrashed] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [modalCrashVisible, setModalCrashVisible] = useState(false);
+  const bgColor = hasCrashed ? '#F7E9E3' : '#8B0000';
   const key = useContext(KeyContext);
   
   
   // Effect to fetch initial data
   useEffect(() => {
-    fetchDataCrash((result) => {
-      console.log(result);
-    });
     fetchDataIsCrash((result) => {
       setHasCrashed(result);
     });
@@ -55,11 +53,6 @@ export default function Home({ navigation }) {
     const width = pressAction.interpolate({
       inputRange: [0, 1],
       outputRange: [0, buttonWidth],
-    });
-
-    const bgColor = pressAction.interpolate({
-      inputRange: [0, 1],
-      outputRange: [hasCrashed ? '#F7E9E3' : '#8B0000', hasCrashed ? '#F7E9E3' : '#8B0000'],
     });
 
     return {

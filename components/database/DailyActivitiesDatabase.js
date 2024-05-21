@@ -41,7 +41,6 @@ const insertDataDailyActivities = (activityid, duration, date, comment) => {
 }
 
 const fetchDataDailyActivities = (date, rollback) => {
-    console.log('Fetching activities for date:', date);
     db.transaction(tx => {
         tx.executeSql(
             `SELECT d.id, a.activity, a.category, d.duration, d.comment 

@@ -159,9 +159,11 @@ const styles = StyleSheet.create({
     flex:1,
   },
   savedButtonContainer: {
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-    fley: 1,
+    flex: 3,
+    alignSelf: 'flex-end',
+    marginRight: 20,
+    marginBottom: 20,
+    marginTop: 20,
   },
   saveButton: {
     position: 'absolute',
@@ -256,9 +258,11 @@ const styles = StyleSheet.create({
     marginTop: 20, 
   },
   progressContainer: {
+    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
+    justifySelf: 'flex-start',
     paddingBottom: 10,
   },
   dot: {
@@ -312,6 +316,12 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 0,
     right: 20,
+    zIndex: 1,
+  },
+  iconSendContainer: {
+    position: 'absolute',
+    top: 0,
+    right: 60,
     zIndex: 1,
   },
   listText: {

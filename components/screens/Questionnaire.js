@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Button, FlatList, TouchableOpacity, TextInput, Platform, TouchableWithoutFeedback, Keyboard, Modal, ScrollView } from 'react-native';
+import { Text, View,TouchableOpacity, TextInput, Platform, TouchableWithoutFeedback, Keyboard, Modal, ScrollView } from 'react-native';
 import { useEffect, useState, useContext} from 'react';
 import { fetchDataSymptoms } from '../database/SymptomsDatabase';
 import styles from '../styles/style';
@@ -18,13 +18,13 @@ export default function Questionnaire({navigation}) {
   const [currentSymptomIndex, setCurrentSymptomIndex] = useState(0);
   const [symptomsIntensity, setSymptomsIntensity] = useState({});
   const [symptomComments, setSymptomComments] = useState({});
-  const [hasAnswered, setHasAnswered] = useState(false);
   const [data, setData] = useState([]);
   const date = getDate();
   const [textInputFocus, setTextInputFocus] = useState(false);
   const [isDone, setIsDone] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [testDone, setTestDone] = useState(false);
+  const buttonStyle = (isDone) && (Object.keys(symptomsIntensity).length > currentSymptomIndex) ? styles.button : styles.buttonDisabled;
   const key = useContext(KeyContext);
 
   useEffect(() => {
@@ -103,7 +103,7 @@ export default function Questionnaire({navigation}) {
     ));
 
     return (
-      <View style={{flex: 1, marginBottom: 200, justifyContent: 'space-around',}}>
+      <View style={{justifyContent: 'space-between', flex: 10}}>
         <View style={styles.containerQuestions}>
           <TouchableOpacity 
             onPress={goToPreviousSymptom}
@@ -151,14 +151,24 @@ export default function Questionnaire({navigation}) {
         {sortedSymptoms.map((symptom, index) => {
           const isAnswered = symptomsIntensity.hasOwnProperty(symptom.id);
           const isActive = index === currentSymptomIndex;
-          const dotSize = isActive ? 13 : 6;
+          const dotSize = isActive ? 16 : 8;
           const dotColor = isAnswered ? '#171412' : 'rgba(128, 128, 128, 0.5)';
   
           return (
-            <View
-              key={index}
-              style={[styles.dot, { width: dotSize, height: dotSize, backgroundColor: dotColor }]}
-            />
+            dotColor === '#171412' ? (
+              <TouchableOpacity
+                key={index}
+                onPress={() => setCurrentSymptomIndex(index)}
+              >
+                <View style={[styles.dot, { width: dotSize, height: dotSize, backgroundColor: dotColor }]} />
+              </TouchableOpacity>
+            ) : (
+              <View
+                key={index}
+              >
+                <View style={[styles.dot, { width: dotSize, height: dotSize, backgroundColor: dotColor }]} />
+              </View>
+            )
           );
         })}
       </View>
@@ -167,12 +177,9 @@ export default function Questionnaire({navigation}) {
 
   const saveAnswersToDatabase = () => {
     Object.keys(symptomsIntensity).forEach(symptomId => {
-      const dateEncrypted = encryption(date, key);
-      const intensityEncrypted = encryption((symptomsIntensity[symptomId]).toString(), key);
-      const commentEncrypted = encryption(symptomComments[symptomId], key);
-
-      insertDataDailySymptoms(symptomId, encryption((symptomsIntensity[symptomId]).toString(), key), encryption(date, key), encryption(symptomComments[symptomId], key));
+      insertDataDailySymptoms(symptomId, encryption(symptomsIntensity[symptomId].toString(), key), encryption(date, key), encryption(symptomComments[symptomId], key));
     });
+    setTestDone(true);
     navigation.navigate('Home');
   };
 
@@ -197,6 +204,7 @@ export default function Questionnaire({navigation}) {
                   {<AntDesign name="arrowleft" size={18} color={'black'} />}{<AntDesign name="arrowright" size={18} color={'black'} />}
                   Te permet de passer d'une question à l'autre. {"\n"}
                   Attention, tu ne peux passer à la question suivante qu'une fois que tu as indiqué noté la symptôme.{"\n"}
+                  Tu peux également directement cliquer sur les points de la bar de progression (seulement ceux qui sont en noir) pour retourner à une question précédente.{"\n"}
                   {"\n"}
                   Écris un commentaire si tu le souhaites.{"\n"}
                   {"\n"}
@@ -223,15 +231,15 @@ export default function Questionnaire({navigation}) {
                   <AntDesign name="questioncircleo" size={24} color="black" />
                 </TouchableOpacity>
                 {renderQuestion(sortedSymptoms[currentSymptomIndex])}
-                
-                
-                {(isDone) && (Object.keys(symptomsIntensity).length > currentSymptomIndex) ? (
                   <View style={styles.savedButtonContainer}>
-                    <TouchableOpacity style={styles.saveButton} onPress={saveAnswersToDatabase}>
+                    <TouchableOpacity 
+                      style={buttonStyle} 
+                      disabled={!isDone || Object.keys(symptomsIntensity).length <= currentSymptomIndex}
+                      onPress={saveAnswersToDatabase}
+                    >
                         <Text style={styles.buttonText}>Terminer</Text>
                     </TouchableOpacity>
                   </View>
-                ) : <View style={styles.savedButtonContainer}></View> } 
           </>   
         } 
           <TouchableOpacity style={styles.bottomButton} onPress={() => navigation.navigate('Home')}>

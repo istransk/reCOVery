@@ -7,7 +7,6 @@ import CryptoES from 'crypto-es';
 const getKeyValue = async () => {
     try {
         const value = await SecureStore.getItemAsync('key');
-        console.log('key getKeyValue:', value);
         return value;
     } catch (error) {
         console.error('Error getting value from SecureStore:', error);
@@ -30,7 +29,6 @@ const decryption = (cryptedData,key) => {
 
 const generateKey = async () => {
     UUID = Crypto.randomUUID();
-    console.log('UUID:', UUID);
     await SecureStore.setItemAsync('key', UUID);
     return UUID;
 };
@@ -38,7 +36,7 @@ const generateKey = async () => {
 const checkIfValueExists = async (key) => {
     try {
       const value = await SecureStore.getItemAsync(key);
-      return value; // Returns true if value exists, false otherwise
+      return value; 
     } catch (error) {
       console.error('Error checking value in SecureStore:', error);
       throw error;

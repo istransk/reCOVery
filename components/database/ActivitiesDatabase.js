@@ -19,7 +19,6 @@ const clearDatabaseActivities = () => {
 }
 
 const insertDataActivities = (activity, category) => {
-    console.log('Inserting activity:', activity, 'category:', category, 'into database.');
     db.transaction(tx => {
         tx.executeSql(
             'INSERT INTO Activities (activity, category) VALUES (?, ?);',
@@ -41,18 +40,6 @@ const fetchDataActivities = (callback) => {
             [],
             (_, { rows }) => {
                 activities = rows._array;
-                //sort activities by activity name
-                activities.sort((a, b) => {
-                    const activityA = a.activity.toLowerCase();
-                    const activityB = b.activity.toLowerCase();
-                    if (activityA < activityB) {
-                        return -1;
-                    }
-                    if (activityA > activityB) {
-                        return 1;
-                    }
-                    return 0;
-                })
                 callback(activities);
             },
             (_, error) => {

@@ -6,12 +6,11 @@ import Results from './components/screens/Results';
 import Questionnaire from './components/screens/Questionnaire';
 import Activities from './components/screens/activities/Activities';
 import AddActivities from './components/screens/activities/AddDailyActivity';
-import AddNewActivity from './components/screens/activities/AddNewActivity';
 import Loading from './components/screens/Loading';
 import Initializing from './components/screens/Initializing';
 import {fetchDataSymptoms} from './components/database/SymptomsDatabase';
-import {initializeDailyActivitiesDatabase, clearDailyActivitiesDatabase} from './components/database/DailyActivitiesDatabase';
-import { initializeDailySymptomsDatabase, clearDailySymptomsDatabase } from './components/database/DailySymptomsDatabase';
+import {initializeDailyActivitiesDatabase} from './components/database/DailyActivitiesDatabase';
+import { initializeDailySymptomsDatabase} from './components/database/DailySymptomsDatabase';
 import { KeyProvider } from './components/contexts/KeyContext';
 
 const Tab = createBottomTabNavigator();
@@ -47,9 +46,7 @@ export default function App() {
               <Tab.Screen name="Questionnaire" component={Questionnaire} />
               <Tab.Screen name="Results" component={Results} />
               <Tab.Screen name="Activities" component={Activities} />
-              <Tab.Screen name="AddActivities" component={AddActivities} />
-              <Tab.Screen name="AddNewActivity" component={AddNewActivity} />
-            
+              <Tab.Screen name="AddActivities" component={AddActivities} />  
         </Tab.Navigator>
       </NavigationContainer>
     </KeyProvider>

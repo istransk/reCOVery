@@ -1,9 +1,11 @@
 import {symptoms, activities} from "../database/Symptoms";
 import { useState, useEffect, useContext  } from "react";
 import { Text, View, FlatList, TouchableOpacity, Modal, ScrollView} from "react-native";
-import {initializeDatabaseSymptoms, insertDataSymptoms, fetchDataSymptoms, clearDatabaseSymptoms} from "../database/SymptomsDatabase";
-import {initializeDatabaseActivities, insertDataActivities, clearDatabaseActivities} from "../database/ActivitiesDatabase";
+import {initializeDatabaseSymptoms, insertDataSymptoms,} from "../database/SymptomsDatabase";
+import {initializeDatabaseActivities, insertDataActivities} from "../database/ActivitiesDatabase";
 import { initializeCrashDatabase } from '../database/CrashDatabase';
+import { initializeDailyActivitiesDatabase } from '../database/DailyActivitiesDatabase';
+import { initializeDailySymptomsDatabase } from '../database/DailySymptomsDatabase';
 import { encryption } from "../utils/encryption";
 import { KeyContext } from "../contexts/KeyContext";
 import { AntDesign } from '@expo/vector-icons';
@@ -15,17 +17,18 @@ export default function Initializing({ navigation }) {
     const [hasStarted, setHasStarted] = useState(false);
     const [isDone, setIsDone] = useState(false);
     const [symptomFinished, setSymptomFinished] = useState(false);
-    const [currentSymptom, setCurrentSymptom] = useState(0);
     const [currentSymptomIndex, setCurrentSymptomIndex] = useState(0);
     const [modalVisible, setModalVisible] = useState(false);
-    const [modalOverviewVisible, setModalOverviewVisible] = useState(false);
     const key = useContext(KeyContext);
     const [isLoading, setIsLoading] = useState(true);
+    const buttonStyle = symptomFinished && (Object.keys(symptomsIntensity).length > currentSymptomIndex) ? styles.button : styles.buttonDisabled; 
 
     useEffect(() => {
         initializeDatabaseSymptoms();
         initializeDatabaseActivities();
         initializeCrashDatabase();
+        initializeDailyActivitiesDatabase();
+        initializeDailySymptomsDatabase();
         
         setTimeout(() => {
             setIsLoading(false);
@@ -92,7 +95,7 @@ export default function Initializing({ navigation }) {
         ));
 
         return (
-            <View style={{flex: 1, marginBottom: 200, justifyContent: 'space-around',}}>
+            <View style={{flex: 15, justifyContent: 'space-evenly',}}>
                 <View style={styles.containerQuestions}>
                 
                 <TouchableOpacity 
@@ -131,7 +134,7 @@ export default function Initializing({ navigation }) {
     const renderSymptomWithIntensity = ({ item }) => {
         return (
             <View style={styles.activityContainer}>
-            <Text style={styles.durationText}>{item.symptom}: {item.intensity }</Text>
+                <Text style={styles.durationText}>{item.symptom}: {item.intensity }</Text>
             </View>
         );
     };
@@ -218,14 +221,16 @@ export default function Initializing({ navigation }) {
                     <ProgressIndicator />
                     {renderSymptomItem(symptoms[currentSymptomIndex])}
                 
-                    {symptomFinished && (Object.keys(symptomsIntensity).length > currentSymptomIndex) ? (
-                            <View style={styles.savedButtonContainer}>
-                            <TouchableOpacity style={styles.saveButton} onPress={() => setIsDone(true)}>
-                                <Text style={styles.buttonText}>Terminer</Text>
-                            </TouchableOpacity>
-                            </View>
-                        ) : <View style={styles.savedButtonContainer}></View> }
                     
+                    <View style={styles.savedButtonContainer}>
+                        <TouchableOpacity 
+                            style={buttonStyle}
+                            disabled={!symptomFinished || (Object.keys(symptomsIntensity).length <= currentSymptomIndex)} 
+                            onPress={() => setIsDone(true)}
+                        >
+                            <Text style={styles.buttonText}>Terminer</Text>
+                        </TouchableOpacity>
+                    </View>
                 </View>
             )}
             {isDone && (
@@ -238,14 +243,14 @@ export default function Initializing({ navigation }) {
                                 keyExtractor={(item, index) => index.toString()}
                         />
                     </View>
-                <View style={styles.buttonRow}>
-                <TouchableOpacity style={styles.button} onPress={() => {setIsDone(false)}}>
-                    <Text style={styles.buttonText}>Modifier</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.button} onPress={saveAnswersToDatabase}>
-                    <Text style={styles.buttonText}>OK</Text>
-                </TouchableOpacity>
-                </View>
+                    <View style={styles.buttonRow}>
+                        <TouchableOpacity style={styles.button} onPress={() => {setIsDone(false)}}>
+                            <Text style={styles.buttonText}>Modifier</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.button} onPress={saveAnswersToDatabase}>
+                            <Text style={styles.buttonText}>Valider</Text>
+                        </TouchableOpacity>
+                    </View>
                 </View>
             )}
         </View>

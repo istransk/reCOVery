@@ -20,6 +20,7 @@ export default function AddActivities({navigation}) {
     const [activityId, setActivityId] = useState('');
     const [duration, setDuration] = useState('');
     const [comment, setComment] = useState(null);
+    const [modalVisible, setModalVisible] = useState(false);
     const [modalAddActivityVisible, setModalAddActivityVisible] = useState(false);
     const [activity, setActivity] = useState('');
     const [category, setCategory] = useState('');
@@ -44,8 +45,6 @@ export default function AddActivities({navigation}) {
                     return 0;
                 });
                 result.push({id: 'other', activity: encryption('Autre', key)});
-                console.log("data fetched");
-                console.log(activityAdded);
                 setActivitiesList(result);
             });
         }, [activityAdded])
@@ -60,7 +59,6 @@ export default function AddActivities({navigation}) {
     const selectActivity = (id, activity) => {
         setActivityId(id);
         setActivitySelected(activity);
-        console.log(activityId);
     }
 
     const saveActivity = (activity, category) => {
@@ -68,15 +66,11 @@ export default function AddActivities({navigation}) {
         setActivityAdded(activityAdded + 1);
     }
     const handleBackgroundPress = () => {
-        
-    console.log('background press');
-    console.log(textInputFocus);
         if (textInputFocus) {
-            console.log('dismiss keyboard');
             Keyboard.dismiss();
             setTextInputFocus(false);
         }
-      };
+    };
 
     return (
         <View style={styles.container}>
@@ -124,12 +118,37 @@ export default function AddActivities({navigation}) {
                                 onPress={() => { saveActivity(activity, category);setModalAddActivityVisible(false), setActivity(''), setCategory('')}}
                                 disabled={activity === '' || category === ''}
                             >
-                                <Text style={styles.buttonText}>Enregistrer</Text>
+                                <Text style={styles.buttonText}>Valider</Text>
                             </TouchableOpacity>
                         </View>
                     </View>
                 </View>
                 </TouchableWithoutFeedback>
+            </Modal>
+            <Modal 
+                visible={modalVisible}
+                transparent={true}
+                >
+                <View style={styles.modalContainer}>
+                    <View style={styles.modalContent}>
+                        <Text style={styles.text}>
+                            Ici tu ajoutes tes activités de la journée. {"\n"}
+                            {"\n"}
+                            Appuie sur l'activité que tu as fait dans la lise, si elle n'est pas présente, appuie sur autre.
+                            Tu pourras alors ajouter une nouvelle activité à la liste en écrivant son nom et en indiquant si elle est
+                            fatigante ou énerhisante.{"\n"}
+                            {"\n"}
+                            Une fois que tu as indiqué la durée de l'activité, tu peux alors l'enregistrer. {"\n"}
+                            {"\n"}
+                            Tu peux également mettre un commentaire si besoin.
+                            {"\n"}
+                            Le bouton Retour te permet de retourner à la liste des activités.{"\n"}
+                        </Text>
+                    <TouchableOpacity style={styles.button} onPress={() => setModalVisible(false)}>
+                        <Text style={styles.buttonText}>Fermer</Text>
+                    </TouchableOpacity>
+                    </View>
+                </View>
             </Modal>
             <TouchableWithoutFeedback onPress={handleBackgroundPress}>
             <View style={styles.contentContainer}>

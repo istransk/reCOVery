@@ -75,7 +75,7 @@ export default function Activities({navigation}) {
         <Modal 
         visible={modalVisible}
         transparent={true}
-      >
+        >
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
                 <Text style={styles.text}>
