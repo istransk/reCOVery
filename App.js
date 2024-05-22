@@ -9,8 +9,6 @@ import AddActivities from './components/screens/activities/AddDailyActivity';
 import Loading from './components/screens/Loading';
 import Initializing from './components/screens/Initializing';
 import {fetchDataSymptoms} from './components/database/SymptomsDatabase';
-import {initializeDailyActivitiesDatabase} from './components/database/DailyActivitiesDatabase';
-import { initializeDailySymptomsDatabase} from './components/database/DailySymptomsDatabase';
 import { KeyProvider } from './components/contexts/KeyContext';
 
 const Tab = createBottomTabNavigator();
@@ -20,8 +18,6 @@ export default function App() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    initializeDailyActivitiesDatabase();
-    initializeDailySymptomsDatabase();
     try {
       fetchDataSymptoms(results => setSymptoms(results));
     } catch (error) {
