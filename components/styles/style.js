@@ -1,4 +1,4 @@
-import { Platform,StyleSheet } from 'react-native';
+import { KeyboardAvoidingView, Platform,StyleSheet } from 'react-native';
 
 const styles = StyleSheet.create({
   container: {
@@ -14,6 +14,14 @@ const styles = StyleSheet.create({
       },
     }),
     marginTop: 50,
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '100%',
+    backgroundColor: '#dcc1a7',
+    flexDirection: 'column',
+  },
+  KeyboardAvoidingView: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',

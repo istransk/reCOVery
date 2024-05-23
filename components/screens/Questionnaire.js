@@ -1,4 +1,4 @@
-import { Text, View,TouchableOpacity, TextInput, Platform, TouchableWithoutFeedback, Keyboard, Modal, ScrollView } from 'react-native';
+import { Text, View,TouchableOpacity, TextInput, Platform, TouchableWithoutFeedback, Keyboard, Modal, ScrollView, KeyboardAvoidingView } from 'react-native';
 import { useEffect, useState, useContext} from 'react';
 import { fetchDataSymptoms } from '../database/SymptomsDatabase';
 import styles from '../styles/style';
@@ -219,6 +219,7 @@ export default function Questionnaire({navigation}) {
           </View>
         </View>
       </Modal>
+      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.KeyboardAvoidingView}>
        <TouchableWithoutFeedback onPress={handleBackgroundPress}>
         <View 
           style={styles.contentContainer}
@@ -247,6 +248,7 @@ export default function Questionnaire({navigation}) {
           </TouchableOpacity>
         </View>
       </TouchableWithoutFeedback>
+      </KeyboardAvoidingView>
       {Platform.OS === 'ios' ? <View style={styles.iphoneBottom}></View> : null}
     </View>
   );

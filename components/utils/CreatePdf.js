@@ -270,7 +270,7 @@ export default function CreatePdf() {
 
 
     async function execute(html) {
-        const { uri } = await Print.printToFileAsync({html, width:595, height:842, margins:{top: 20, left: 20, right: 20, bottom: 20}}); //A4 format 595×842 dots (PostScript points)
+        const { uri } = await Print.printToFileAsync({html, width:595, height:842}); //A4 format 595×842 dots (PostScript points)
         Sharing.shareAsync(uri);
     }
     

@@ -1,4 +1,4 @@
-import { FlatList, View, TouchableOpacity, Text, TextInput, Modal, ScrollView, TouchableWithoutFeedback, Platform, Keyboard} from "react-native";
+import { FlatList, View, TouchableOpacity, Text, TextInput, Modal, ScrollView, TouchableWithoutFeedback, Platform, Keyboard, KeyboardAvoidingView} from "react-native";
 import { useFocusEffect } from '@react-navigation/native';
 import { useEffect, useState, useCallback, useContext } from "react"; 
 import {insertDataActivities, fetchDataActivities} from "../../database/ActivitiesDatabase";
@@ -150,8 +150,9 @@ export default function AddActivities({navigation}) {
                     </View>
                 </View>
             </Modal>
+            <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.KeyboardAvoidingView}>
             <TouchableWithoutFeedback onPress={handleBackgroundPress}>
-            <View style={styles.contentContainer}>
+            <>
                 <TouchableOpacity style={styles.iconButtonContainer} onPress={() => setModalVisible(true)}>
                     <AntDesign name="questioncircleo" size={24} color="black" />
                 </TouchableOpacity>
@@ -208,8 +209,10 @@ export default function AddActivities({navigation}) {
                         <Text style={styles.buttonText}>Valider</Text>
                     </TouchableOpacity>
                 </View>
-            </View>
+            
+            </>
             </TouchableWithoutFeedback>
+            </KeyboardAvoidingView>
             {Platform.OS === 'ios' ? <View style={styles.iphoneBottom}></View> : null}
         </View>
     );
