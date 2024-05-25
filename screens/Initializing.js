@@ -1,4 +1,4 @@
-import {symptoms, activities} from "../database/Symptoms";
+import {symptoms, activities} from "../utils/data";
 import { useState, useEffect, useContext  } from "react";
 import { Text, View, FlatList, TouchableOpacity, Modal, ScrollView} from "react-native";
 import {initializeDatabaseSymptoms, insertDataSymptoms,} from "../database/SymptomsDatabase";

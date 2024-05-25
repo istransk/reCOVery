@@ -1,4 +1,4 @@
-import { categories } from "../database/Symptoms";
+import { categories } from "./data";
 
 const dataDailyActivitiesTreatment = (activities) => {
     const dataTreated = {}

@@ -1,12 +1,10 @@
-import { StyleSheet, Text, View, Button, Animated, TouchableWithoutFeedback, TouchableOpacity, FlatList, Platform, Modal, ScrollView } from 'react-native';
+import {  Text, View, Animated, TouchableWithoutFeedback, TouchableOpacity,Platform, Modal, ScrollView } from 'react-native';
 import {useEffect, useState, useContext} from 'react';
-import {fetchDataIsCrash, insertCrashData, updateCrashData, fetchDataCrash, isCrash} from '../database/CrashDatabase';
-import { insertDataDailySymptoms } from '../database/DailySymptomsDatabase';
+import {fetchDataIsCrash, insertCrashData, updateCrashData} from '../database/CrashDatabase';
 import styles from '../styles/style';
-import CreatePdf from '../utils/CreatePdf';
 import { KeyContext } from '../contexts/KeyContext';
 import { AntDesign } from '@expo/vector-icons';
-import { encryption, decryption } from '../utils/encryption';
+import { encryption } from '../utils/encryption';
 import Loading from './Loading';
 
 function getDate() {

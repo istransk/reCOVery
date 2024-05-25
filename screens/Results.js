@@ -11,11 +11,10 @@ import { KeyContext } from '../contexts/KeyContext';
 
 
 import { BarChart, LineChart } from 'react-native-gifted-charts';
-import { categories } from '../database/Symptoms';
+import { categories } from '../utils/data';
 import styles from '../styles/style';
 import { AntDesign, Feather } from '@expo/vector-icons';
-import { Line } from 'react-native-svg';
-import CreatePdf from '../utils/CreatePdf';
+import CreatePdf from '../components/CreatePdf';
 
 export default function Results({navigation}) {
   const [listSymptoms, setListSymptoms] = useState([]);
@@ -49,7 +48,7 @@ export default function Results({navigation}) {
         const decryptedData = results.map(item => ({
           ...item,
           dateStart: decryption(item.dateStart, key),
-          dateEnd: decryption(item.dateEnd, key),
+          dateEnd: item.dateEnd ? decryption(item.dateEnd, key) : null,
         }));
         setDataCrash(decryptedData);
 
@@ -339,7 +338,7 @@ export default function Results({navigation}) {
           scrollEnabled={false}
           renderItem={({ item, index }) => (
             <View style={{margin: 10}}>
-              <Text>{index + 1})  Du {item.dateStart.split('-')[2]} {currentMonthName} {item.dateStart.split('-')[0]} au {item.dateEnd.split('-')[2]} {currentMonthName} {item.dateEnd.split('-')[0]}</Text>
+              <Text>{index + 1})  Du {item.dateStart.split('-')[2]} {currentMonthName} {item.dateStart.split('-')[0]} au {item.dateEnd ? `${item.dateEnd.split('-')[2]} ${currentMonthName} ${item.dateEnd.split('-')[0]}` : '-'}</Text>
             </View>
           )}
         />

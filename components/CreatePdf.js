@@ -5,7 +5,7 @@ import { View, TouchableOpacity } from 'react-native';
 import { fetchDataDailySymptoms } from '../database/DailySymptomsDatabase';
 import { fetchAllDataDailyActivities } from '../database/DailyActivitiesDatabase';
 import { fetchDataCrash } from '../database/CrashDatabase';
-import { decryption } from './encryption';
+import { decryption } from '../utils/encryption';
 import { KeyContext } from '../contexts/KeyContext';
 import { Feather } from '@expo/vector-icons';
 import styles from '../styles/style';

@@ -1,10 +1,10 @@
 import { FlatList, View, TouchableOpacity, Text, TextInput, Modal, ScrollView, TouchableWithoutFeedback, Platform, Keyboard, KeyboardAvoidingView} from "react-native";
 import { useFocusEffect } from '@react-navigation/native';
-import { useEffect, useState, useCallback, useContext } from "react"; 
+import {  useState, useCallback, useContext } from "react"; 
 import {insertDataActivities, fetchDataActivities} from "../../database/ActivitiesDatabase";
 import {insertDataDailyActivities} from "../../database/DailyActivitiesDatabase";
 import { encryption, decryption } from "../../utils/encryption";
-import { categories } from "../../database/Symptoms";
+import { categories } from "../../utils/data";
 import styles from "../../styles/style";
 import { KeyContext } from "../../contexts/KeyContext";
 import { AntDesign, Fontisto } from '@expo/vector-icons';

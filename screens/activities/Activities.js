@@ -1,12 +1,11 @@
-import { Text, View, FlatList, TouchableOpacity, Platform, SafeAreaView, Modal, ScrollView } from 'react-native';
-import { useState, useCallback, Fragment, useContext } from 'react';
+import { Text, View, FlatList, TouchableOpacity, Platform, Modal} from 'react-native';
+import { useState, useCallback, useContext } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
-import {fetchDataDailyActivities, fetchAllDataDailyActivities} from '../../database/DailyActivitiesDatabase';
+import {fetchAllDataDailyActivities} from '../../database/DailyActivitiesDatabase';
 import { Feather,  AntDesign } from '@expo/vector-icons';
-import { decryption, encryption } from '../../utils/encryption';
+import { decryption} from '../../utils/encryption';
 import styles from '../../styles/style';
 import { KeyContext } from '../../contexts/KeyContext';
-import { get } from 'react-native/Libraries/TurboModule/TurboModuleRegistry';
 
 function getDate() {
   return new Date().toISOString().split('T')[0];

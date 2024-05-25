@@ -1,15 +1,15 @@
 import {useEffect, useState} from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import Home from './components/screens/Home';
-import Results from './components/screens/Results';
-import Questionnaire from './components/screens/Questionnaire';
-import Activities from './components/screens/activities/Activities';
-import AddActivities from './components/screens/activities/AddDailyActivity';
-import Loading from './components/screens/Loading';
-import Initializing from './components/screens/Initializing';
-import {fetchDataSymptoms} from './components/database/SymptomsDatabase';
-import { KeyProvider } from './components/contexts/KeyContext';
+import Home from './screens/Home';
+import Results from './screens/Results';
+import Questionnaire from './screens/Questionnaire';
+import Activities from './screens/activities/Activities';
+import AddActivities from './screens/activities/AddDailyActivity';
+import Loading from './screens/Loading';
+import Initializing from './screens/Initializing';
+import {fetchDataSymptoms} from './database/SymptomsDatabase';
+import { KeyProvider } from './contexts/KeyContext';
 
 const Tab = createBottomTabNavigator();
 
